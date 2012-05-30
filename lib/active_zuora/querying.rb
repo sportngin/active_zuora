@@ -22,7 +22,7 @@ module ActiveZuora
 
       def find(id)
         return nil if id.blank?
-        where(:id => id).all.first
+        where(:id => id).first
       end
 
     end
