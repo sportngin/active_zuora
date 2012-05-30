@@ -1,5 +1,4 @@
 module ActiveZuora
-
   class Connection
 
     attr_reader :soap_client
@@ -66,5 +65,4 @@ module ActiveZuora
     end
 
   end
-
 end
