@@ -7,6 +7,7 @@ describe "ZObject" do
     after do
       # Delete the account to cleanup in case a test failed.
       @account.delete if @account
+      @child.delete if @child
     end
 
     it "can can be created, queried, updated, and destroyed" do
@@ -37,6 +38,8 @@ describe "ZObject" do
       # Test querying.
       Z::Account.where(:name => "Some Random Name").all.should_not include(@account)
       Z::Account.where(:name => "Some Random Name").or(:name => @account.name).all.should include(@account)
+      Z::Account.where(:created_date => { ">=" => Date.today }).all.should include(@account)
+      Z::Account.where(:created_date => { ">" => Time.now }).or(:name => @account.name).all.should include(@account)
 
       # Update all.
       Z::Account.where(:name => @account.name).update_all(:name => "ZObject Integration Test Account 3").should == 1
@@ -46,6 +49,18 @@ describe "ZObject" do
       @account.reload.name.should == "ZObject Integration Test Account 34"
       # No changes, so no records were updated.
       Z::Account.where(:name => @account.name).update_all(:name => "ZObject Integration Test Account 34").should == 0
+
+      # Associations
+      @child = Z::Account.create!(
+        :parent_id => @account.id,
+        :name => "ZObject Integration Test Child Account", 
+        :currency => "USD", 
+        :status => "Draft", 
+        :bill_cycle_day => 1)
+      @child.parent.should == @account
+      @account.children.should include(@child)
+      # Make sure that the has_many pre-loads the inverse relationship.
+      @account.children.each { |child| child.parent_loaded?.should be_true }
 
       # Delete all
       Z::Account.where(:name => @account.name).delete_all.should == 1

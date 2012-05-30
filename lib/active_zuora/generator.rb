@@ -117,7 +117,7 @@ module ActiveZuora
         zuora_class.belongs_to :parent, 
           :class_name => "#{@class_nesting.name}::Account"
         zuora_class.has_many :children, 
-          :class_name => "#{@class_nesting.name}::Account", :foreign_key => :parent_id
+          :class_name => "#{@class_nesting.name}::Account", :foreign_key => :parent_id, :inverse_of => :parent
       end
 
       customize 'Amendment' do |zuora_class|
