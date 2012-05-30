@@ -62,8 +62,8 @@ module ActiveZuora
       end
 
       def nested_class_name(unnested_class_name)
-        # This helper method will take a class name, and scope it to
-        # the same module as the given scoped class.
+        # This helper method will take a class name, and nest it inside
+        # the same module/class as self.
         (name.split("::")[0..-2] << unnested_class_name).join("::")
       end
 

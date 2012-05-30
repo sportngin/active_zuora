@@ -1,5 +1,5 @@
 module ActiveZuora
-  class Scope
+  class Query
 
     attr_accessor :selected_field_names, :filters
 
