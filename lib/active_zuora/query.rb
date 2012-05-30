@@ -106,6 +106,12 @@ module ActiveZuora
         "null"
       elsif value.is_a?(String)
         "'#{value.gsub("'","\\\\'")}'"
+      elsif value.is_a?(DateTime) || value.is_a?(Time)
+        # If we already have a DateTime or Time, use the zone it already has.
+        escape_filter_value(value.strftime("%FT%T%:z")) # 2007-11-19T08:37:48-06:00
+      elsif value.is_a?(Date)
+        # Create a DateTime from the date using Zuora's timezone.
+        escape_filter_value(value.to_datetime.change(:offset => "+0800"))
       else
         value
       end
