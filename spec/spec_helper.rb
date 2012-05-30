@@ -10,3 +10,12 @@ ActiveZuora.configure(
 
 module Z; end
 ActiveZuora.generate_classes :module => Z
+
+def integration_test
+  # Block helper.  Integration tests should be wrapped in this block.
+  if ENV['ZUORA_USER'] && ENV['ZUORA_PASS']
+    yield
+  else
+    $stderr.puts "Integration tests skipped because ZUORA_USER or ZUORA_PASS are not set."
+  end
+end
