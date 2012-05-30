@@ -9,7 +9,7 @@ module ActiveZuora
         class_name = options[:class_name] || nested_class_name(items.to_s.singularize.camelize)
         foreign_key = options[:foreign_key] || :"#{zuora_object_name.underscore}_id"
         # inverse_of by default. You can opt out with :inverse_of => false
-        inverse_of = (options[:inverse_of] || self.name.split("::").last.downcase) unless options[:inverse_of] == false
+        inverse_of = (options[:inverse_of] || zuora_object_name.underscore) unless options[:inverse_of] == false
         ivar = "@#{items}"
         define_method("#{items}_loaded?") do
           !instance_variable_get(ivar).nil?
