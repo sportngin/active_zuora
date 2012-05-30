@@ -15,9 +15,13 @@ module ActiveZuora
       # returns an array, it will output the array in the XML.
       # So instead, we'll have our block return the value
       # of the last build_xml call.
-      [values].flatten.map do |value|
+      [values].flatten.compact.map do |value|
         __getobj__.build_xml(xml, soap, value, options)
       end.last
+    end
+
+    def clear_changed_attributes(values)
+      [values].flatten.compact.map { |value| __getobj__.clear_changed_attributes(value) }
     end
 
   end
