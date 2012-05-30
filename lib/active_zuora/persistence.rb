@@ -37,7 +37,7 @@ module ActiveZuora
 
     def xml_field_names
       # If we're rendering an existing record, always include the id.
-      new_record? ? super : [:id] + super
+      new_record? ? super : ([:id] + super).uniq
     end
 
     private

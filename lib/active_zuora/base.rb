@@ -25,8 +25,10 @@ module ActiveZuora
     end
 
     def xml_field_names
-      # Which field names should be rendered during build_xml
-      changed
+      # Which field names should be rendered during build_xml.
+      # Choose only field names that have been changed.
+      # Make sure the order in fields is maintained.
+      field_names & changed.map(&:to_sym)
     end
 
     def build_xml(xml, soap, options={})
