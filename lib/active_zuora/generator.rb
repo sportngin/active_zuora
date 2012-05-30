@@ -7,7 +7,7 @@ module ActiveZuora
       # document is a parsed wsdl document.
       @document = document
       @classes = []
-      @module = options[:module] || ActiveZuora
+      @class_nesting = options[:inside] || ActiveZuora
     end
 
     def generate_classes
@@ -29,7 +29,7 @@ module ActiveZuora
           next if class_name == "zObject"
           
           zuora_class = Class.new
-          @module.const_set(class_name, zuora_class)
+          @class_nesting.const_set(class_name, zuora_class)
           @classes << zuora_class
 
           # Include the Base module for adding fields.
@@ -68,7 +68,7 @@ module ActiveZuora
             when /\A(zns:|ons:)/
               zuora_class.field field_name, :object, 
                 :zuora_name => zuora_name, :array => is_array, 
-                :class_name => "#{@module.name}::#{field_type.split(':').last}"
+                :class_name => "#{@class_nesting.name}::#{field_type.split(':').last}"
             else
               puts "Unkown field type: #{field_type}"
             end
@@ -115,9 +115,9 @@ module ActiveZuora
 
       customize 'Account' do |zuora_class|
         zuora_class.belongs_to :parent, 
-          :class_name => "#{@module.name}::Account"
+          :class_name => "#{@class_nesting.name}::Account"
         zuora_class.has_many :children, 
-          :class_name => "#{@module.name}::Account", :foreign_key => :parent_id
+          :class_name => "#{@class_nesting.name}::Account", :foreign_key => :parent_id
       end
 
       customize 'Amendment' do |zuora_class|
@@ -174,8 +174,8 @@ module ActiveZuora
     end
 
     def customize(zuora_class_name, &block)
-      if @module.const_defined?(zuora_class_name)
-        yield @module.const_get(zuora_class_name)
+      if @class_nesting.const_defined?(zuora_class_name)
+        yield @class_nesting.const_get(zuora_class_name)
       end
     end
 

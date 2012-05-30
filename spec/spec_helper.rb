@@ -9,7 +9,7 @@ ActiveZuora.configure(
 )
 
 module Z; end
-ActiveZuora.generate_classes :module => Z
+ActiveZuora.generate_classes :inside => Z
 
 def integration_test
   # Block helper.  Integration tests should be wrapped in this block.
