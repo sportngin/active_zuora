@@ -16,43 +16,25 @@ module ActiveZuora
       end
     end
 
-    def start_session
-      # instance variables aren't available within the soap request block for some reason.
+    def login
+      # Returns a session_id upon success, raises an exception on failure.
+      # Instance variables aren't available within the soap request block.
       body = { :username => @username, :password => @password }
-      response = @soap_client.request(:login) do
-        soap.body = body
-      end
-      if response.success?
-        @session_expires_at = Time.now + @session_timeout
-        @session_id = response.to_hash[:login_response][:result][:session]
-      end
-      response
+      @soap_client.request(:login){ soap.body = body }[:login_response][:result][:session]
     end
 
-    def session_expired?
-      @session_id.nil? || @session_expires_at <= Time.now
-    end
-
-    def request *args
-      # Login if we know ahead of time that our session has timed out.
-      if session_expired?
-        start_session_response = start_session
-        # Return the error response if the start_session failed.
-        return start_session_response.to_hash unless start_session_response.success?
-      end
+    def request(*args, &block)
       # instance variables aren't available within the soap request block for some reason.
       header = { 'SessionHeader' => { 'session' => @session_id } }
-      response = @soap_client.request(*args) do
+      @soap_client.request(*args) do
         soap.header = header
         yield(soap)
-      end.to_hash
-      # Check for an invalid(expired) session response.  Delete the session id and try again.
-      if response[:fault] && response[:fault][:faultcode] == 'fns:INVALID_SESSION'
-        @session_id = nil
-        request action, body
-      else
-        response
       end
+    rescue Savon::SOAP::Fault => exception
+      # Catch invalid sessions, and re-issue the request.
+      raise unless exception.message =~ /INVALID_SESSION/
+      @session_id = login
+      request(*args, &block)
     end
 
     def query zql
@@ -77,6 +59,10 @@ module ActiveZuora
         record.delete_if { |key, value| key.to_s.start_with? "@" }
       end
       records
+    rescue Savon::SOAP::Fault => exception
+      # Add the zql to the exception message and re-raise.
+      exception.message << ": #{zql}"
+      raise
     end
 
   end
