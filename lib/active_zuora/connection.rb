@@ -4,13 +4,15 @@ module ActiveZuora
 
     attr_reader :soap_client
 
-    def initialize(configuration)
+    WSDL = File.expand_path('../../../wsdl/zuora.wsdl', __FILE__)
+
+    def initialize(configuration={})
       # Store login credentials and create SOAP client.
       @username = configuration[:username]
       @password = configuration[:password]
       @session_timeout = configuration[:session_timeout] || 15.minutes
       @soap_client = Savon::Client.new do
-        wsdl.document = configuration[:wsdl_document]
+        wsdl.document = configuration[:wsdl] || WSDL
       end
     end
 
