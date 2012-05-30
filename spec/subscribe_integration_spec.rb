@@ -37,8 +37,8 @@ describe "Subscribe" do
   end
 
   after do
-    @product.delete
     @account.delete if @account
+    @product.delete
   end
 
   it "Can successfully subscribe using a new account" do
