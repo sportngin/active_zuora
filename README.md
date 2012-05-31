@@ -47,16 +47,12 @@ Or, if you prefer, you can define your ZObjects or Complex Types manually.
 
     end
 
-    class SubscribeRequest
+    class SubscriptionData
 
       include ActiveZuora::Base
-      include ActiveZuora::Subscribe
 
-      field :account, :object
-      field :payment_method, :object
-      field :bill_to_contact, :object, :class_name => 'Contact'
-      field :subscribe_options
-      field :subscription_data
+      field :subscription, :object
+      field :rate_plan_data, :object, :array => true
 
     end
 
