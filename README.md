@@ -18,7 +18,7 @@ Enable SOAP logging to stderr or provide your own wsdl file.
       :wsdl => 'path/to/zuora.wsdl'
     )
 
-## Define the Classes
+## Defining Classes
 
 You can auto-generate all your Zuora classes from the wsdl file.  It will generate all Z-Objects, like Account and Subscription, and Zuora Complex objects, such as SubscribeRequest.
 
