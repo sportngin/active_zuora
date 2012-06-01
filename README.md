@@ -96,6 +96,19 @@ Delete a record with #delete.
 
     ActiveZuora::Account.select(:id, :name).where(:created_date => { "<" => Date.yesterday })
 
+## Scopes
+
+    ActiveZuora::Account.instance_eval do
+      scope :draft, where(:status => "Draft")
+      scope :since, lambda { |datetime| where(:created_date => { ">=" => datetime }) }
+    end
+
+    ActiveZuora::Account.select(:id).draft.since(Date.new 2012).to_zql 
+
+    "select Id from Account where Status = 'Draft' and CreatedDate >= '2012-01-01T00:00:00+08:00'"
+
+Like ActiveRecord, you can also chain any class method on the ZObject, since named scopes are nothing more than class methods that return a Relation object.
+
 ## Update or Delete Using Queries
 
 You can update or delete multiple records at once.  The following command issues two requests to the Zuora API server: the first to query for the records, and the second to update them all at once.  The method returns the count of records that were successfully updated.

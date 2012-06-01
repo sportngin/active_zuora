@@ -36,10 +36,18 @@ describe "ZObject" do
       @account.changes.should be_blank
 
       # Test querying.
-      Z::Account.where(:name => "Some Random Name").all.should_not include(@account)
-      Z::Account.where(:name => "Some Random Name").or(:name => @account.name).all.should include(@account)
-      Z::Account.where(:created_date => { ">=" => Date.today }).all.should include(@account)
-      Z::Account.where(:created_date => { ">" => Time.now }).or(:name => @account.name).all.should include(@account)
+      Z::Account.where(:name => "Some Random Name").should_not include(@account)
+      Z::Account.where(:name => "Some Random Name").or(:name => @account.name).should include(@account)
+      Z::Account.where(:created_date => { ">=" => Date.today }).should include(@account)
+      Z::Account.where(:created_date => { ">" => Time.now }).or(:name => @account.name).should include(@account)
+
+      # Test scopes and chaining.
+      Z::Account.instance_eval do
+        scope :draft, where(:status => "Draft")
+        scope :since, lambda { |datetime| where(:created_date => { ">=" => datetime }) }
+      end
+      Z::Account.select(:id).draft.to_zql.should == "select Id from Account where Status = 'Draft'"
+      Z::Account.select(:id).draft.since(Date.new 2012).to_zql.should == "select Id from Account where Status = 'Draft' and CreatedDate >= '2012-01-01T00:00:00+08:00'"
 
       # Update all.
       Z::Account.where(:name => @account.name).update_all(:name => "ZObject Integration Test Account 3").should == 1

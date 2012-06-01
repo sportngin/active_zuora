@@ -3,8 +3,7 @@ module ActiveZuora
 
     attr_accessor :selected_field_names, :filters
 
-    delegate :first, :last, :size, :count, :each, :empty?, :any?, :blank?, :present?,
-      :to => :all
+    attr_reader :zobject_class
 
     def initialize(zobject_class, selected_field_names=[:id])
       @zobject_class, @selected_field_names, @filters = zobject_class, selected_field_names, []
@@ -16,6 +15,10 @@ module ActiveZuora
       dup.filters = dup.filters.dup
       dup
     end
+
+    #
+    # Conditions / Selecting
+    #
 
     def select(*field_names)
       dup.tap { |dup| dup.selected_field_names = field_names.flatten }
@@ -31,8 +34,34 @@ module ActiveZuora
       dup.tap { |dup| dup.filters << ['or', conditions] }\
     end
 
+    def scoped
+      # Account.select(:id).where(:status => "Draft") do
+      #   Account.all # => select id from Account where status = "Draft"
+      # end
+      previous_scope, zobject_class.current_scope = zobject_class.current_scope, self
+      yield
+    ensure
+      zobject_class.current_scope = previous_scope
+    end
+
+    def merge(relation)
+      dup.tap do |dup| 
+        dup.filters.concat relation.filters
+        dup.filters.uniq!
+      end
+    end
+
+    #
+    # Finding / Loading
+    #
+
     def to_zql
-      select_statement + " from " + @zobject_class.zuora_object_name + " " + where_statement
+      select_statement + " from " + zobject_class.zuora_object_name + " " + where_statement
+    end
+
+    def find(id)
+      return nil if id.blank?
+      where(:id => id).first
     end
 
     def all
@@ -48,25 +77,10 @@ module ActiveZuora
       self
     end
 
-    def update_all(attributes={})
-      # Update using an attribute hash, or you can pass a block
-      # and update the attributes directly on the objects.
-      if block_given?
-        all.each { |record| yield record }
-      else
-        all.each { |record| record.attributes = attributes }
-      end
-      @zobject_class.update(all)
-    end
-
-    def delete_all
-      @zobject_class.delete(all.map(&:id))
-    end
-
     def query(zql)
       # Keep querying until all pages are retrieved.
       # Throws an exception for an invalid query.
-      response = @zobject_class.connection.request(:query){ |soap| soap.body = { :query_string => zql } }
+      response = zobject_class.connection.request(:query){ |soap| soap.body = { :query_string => zql } }
       query_response = response[:query_response]
       records = query_response[:result][:records] || []
       # Sometimes Zuora will return only a single record, not in an array.
@@ -74,7 +88,7 @@ module ActiveZuora
       # If there are more pages of records, keep fetching
       # them until done.
       until query_response[:result][:done]
-        query_response = @zobject_class.connection.request(:query_more) do |soap|
+        query_response = zobject_class.connection.request(:query_more) do |soap|
           soap.body = { :query_locator => response[:query_response][:result][:query_locator] }
         end[:query_more_response]
         records.concat query_response[:result][:records]
@@ -86,7 +100,7 @@ module ActiveZuora
       end
       records.map do |attributes|
         # Instantiate the zobject class, but don't track the changes.
-        @zobject_class.new(attributes).tap { |record| record.clear_changed_attributes }
+        zobject_class.new(attributes).tap { |record| record.clear_changed_attributes }
       end
     rescue Savon::SOAP::Fault => exception
       # Add the zql to the exception message and re-raise.
@@ -94,7 +108,42 @@ module ActiveZuora
       raise
     end
 
-    private
+    #
+    # Updating / Deleting
+    #
+
+    def update_all(attributes={})
+      # Update using an attribute hash, or you can pass a block
+      # and update the attributes directly on the objects.
+      if block_given?
+        all.each { |record| yield record }
+      else
+        all.each { |record| record.attributes = attributes }
+      end
+      zobject_class.update(all)
+    end
+
+    def delete_all
+      zobject_class.delete(all.map(&:id))
+    end
+
+    protected
+
+    def method_missing(method, *args, &block)
+      # This is how the chaing can happen on class methods or named scopes on the 
+      # ZObject class.
+      if Array.method_defined?(method)
+        all.send(method, *args, &block)
+      elsif zobject_class.respond_to?(method)
+        scoped { zobject_class.send(method, *args, &block) }
+      else
+        super
+      end
+    end
+
+    #
+    # Helper methods to build the ZQL.
+    #
 
     def select_statement
       "select " + selected_field_names.map { |field_name| zuora_field_name(field_name) }.join(', ')
@@ -121,7 +170,7 @@ module ActiveZuora
     end
 
     def zuora_field_name(name)
-      @zobject_class.get_field!(name).zuora_name
+      zobject_class.get_field!(name).zuora_name
     end
 
     def escape_filter_value(value)
