@@ -31,7 +31,7 @@ module ActiveZuora
 
     def reload
       raise ArgumentError.new("You can't reload a new record") if new_record?
-      self.untracked_attributes = self.class.where(:id => id).as_hashes.first
+      self.untracked_attributes = self.class.find(id).attributes
       self
     end
 

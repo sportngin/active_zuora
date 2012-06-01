@@ -1,5 +1,5 @@
 module ActiveZuora
-  class Query
+  class Relation
 
     attr_accessor :selected_field_names, :filters
 
@@ -35,16 +35,8 @@ module ActiveZuora
       select_statement + " from " + @zobject_class.zuora_object_name + " " + where_statement
     end
 
-    def as_hashes
-      query(to_zql)
-    end
-
     def all
-      @records ||= as_hashes.map do |attributes|
-        # Instantiate the zobject class, but don't track
-        # the changes.
-        @zobject_class.new(attributes).tap { |record| record.clear_changed_attributes }
-      end
+      @records ||= query(to_zql)
     end
 
     def loaded?
@@ -69,6 +61,37 @@ module ActiveZuora
 
     def delete_all
       @zobject_class.delete(all.map(&:id))
+    end
+
+    def query(zql)
+      # Keep querying until all pages are retrieved.
+      # Throws an exception for an invalid query.
+      response = @zobject_class.connection.request(:query){ |soap| soap.body = { :query_string => zql } }
+      query_response = response[:query_response]
+      records = query_response[:result][:records] || []
+      # Sometimes Zuora will return only a single record, not in an array.
+      records = [records] unless records.is_a?(Array)
+      # If there are more pages of records, keep fetching
+      # them until done.
+      until query_response[:result][:done]
+        query_response = @zobject_class.connection.request(:query_more) do |soap|
+          soap.body = { :query_locator => response[:query_response][:result][:query_locator] }
+        end[:query_more_response]
+        records.concat query_response[:result][:records]
+      end
+      # Strip any noisy attributes from the results that have to do with 
+      # SOAP namespaces.
+      records.each do |record|
+        record.delete_if { |key, value| key.to_s.start_with? "@" }
+      end
+      records.map do |attributes|
+        # Instantiate the zobject class, but don't track the changes.
+        @zobject_class.new(attributes).tap { |record| record.clear_changed_attributes }
+      end
+    rescue Savon::SOAP::Fault => exception
+      # Add the zql to the exception message and re-raise.
+      exception.message << ": #{zql}"
+      raise
     end
 
     private
@@ -115,34 +138,6 @@ module ActiveZuora
       else
         value
       end
-    end
-
-    def query(zql)
-      # Keep querying until all pages are retrieved.
-      # Throws an exception for an invalid query.
-      response = @zobject_class.connection.request(:query){ |soap| soap.body = { :query_string => zql } }
-      query_response = response[:query_response]
-      records = query_response[:result][:records] || []
-      # Sometimes Zuora will return only a single record, not in an array.
-      records = [records] unless records.is_a?(Array)
-      # If there are more pages of records, keep fetching
-      # them until done.
-      until query_response[:result][:done]
-        query_response = @zobject_class.connection.request(:query_more) do |soap|
-          soap.body = { :query_locator => response[:query_response][:result][:query_locator] }
-        end[:query_more_response]
-        records.concat query_response[:result][:records]
-      end
-      # Strip any noisy attributes from the results that have to do with 
-      # SOAP namespaces.
-      records.each do |record|
-        record.delete_if { |key, value| key.to_s.start_with? "@" }
-      end
-      records
-    rescue Savon::SOAP::Fault => exception
-      # Add the zql to the exception message and re-raise.
-      exception.message << ": #{zql}"
-      raise
     end
 
   end

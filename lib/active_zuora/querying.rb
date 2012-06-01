@@ -5,7 +5,7 @@ module ActiveZuora
 
     included do
       class << self
-        delegate :select, :where, :all, :as_hashes, :to => :query
+        delegate :select, :where, :all, :as_hashes, :to => :relation
       end
     end
 
@@ -15,9 +15,9 @@ module ActiveZuora
         (@excluded_from_queries ||= []).concat field_names.map(&:to_sym)
       end
 
-      def query
+      def relation
         query_field_names = field_names - (@excluded_from_queries ||= [])
-        Query.new(self, query_field_names)
+        Relation.new(self, query_field_names)
       end
 
       def find(id)
