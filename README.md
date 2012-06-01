@@ -104,8 +104,7 @@ Delete a record with #delete.
     end
 
     ActiveZuora::Account.select(:id).draft.since(Date.new 2012).to_zql 
-
-    "select Id from Account where Status = 'Draft' and CreatedDate >= '2012-01-01T00:00:00+08:00'"
+    # => "select Id from Account where Status = 'Draft' and CreatedDate >= '2012-01-01T00:00:00+08:00'"
 
 Like ActiveRecord, you can also chain any class method on the ZObject, since named scopes are nothing more than class methods that return a Relation object.
 
