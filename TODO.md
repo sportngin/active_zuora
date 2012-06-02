@@ -1,5 +1,5 @@
 * add scope conditions to associations
-* make associations into registered objects that are unloaded on object.reload
+* make has_many associations behave like Relations, so you can extend them and reload them.
+* add new/create functions to Relation, The can call new with all filters that use '='.
 * add amend()
 * add get_user_info and other operations
-* put define_methods on anonymous module (for easy overriding)

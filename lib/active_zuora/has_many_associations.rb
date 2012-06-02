@@ -11,21 +11,25 @@ module ActiveZuora
         # inverse_of by default. You can opt out with :inverse_of => false
         inverse_of = (options[:inverse_of] || zuora_object_name.underscore) unless options[:inverse_of] == false
         ivar = "@#{items}"
-        define_method("#{items}_loaded?") do
-          !instance_variable_get(ivar).nil?
-        end
-        define_method("reload_#{items}") do
-          instance_variable_set(ivar, nil)
-          send(items)
-        end
-        define_method(items) do
-          if instance_variable_get(ivar)
-            return instance_variable_get(ivar)
-          else
-            records = class_name.constantize.where(foreign_key => self.id).all
-            records.each { |record| record.send("#{inverse_of}=", self) } if inverse_of
-            instance_variable_set(ivar, records)
-            records
+        # Define the methods on an included module, so we can override
+        # them using super.
+        generated_attribute_methods.module_eval do
+          define_method("#{items}_loaded?") do
+            !instance_variable_get(ivar).nil?
+          end
+          define_method("reload_#{items}") do
+            instance_variable_set(ivar, nil)
+            send(items)
+          end
+          define_method(items) do
+            if instance_variable_get(ivar)
+              return instance_variable_get(ivar)
+            else
+              records = class_name.constantize.where(foreign_key => self.id).all
+              records.each { |record| record.send("#{inverse_of}=", self) } if inverse_of
+              instance_variable_set(ivar, records)
+              records
+            end
           end
         end
       end

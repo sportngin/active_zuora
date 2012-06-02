@@ -33,16 +33,20 @@ module ActiveZuora
       # and I threw in a :CustomField__c just for good measure.      
       writers = [field_name, zuora_name, zuora_name.underscore].uniq
       zuora_class.class_eval do
-        # Getter
-        attr_reader field_name
-        # Boolean check.
-        define_method "#{field_name}?" do
-          !!send(field_name)
-        end
-        # Writers
-        writers.each do |writer_name|
-          define_method "#{writer_name}=" do |value|
-            write_attribute(field_name, value)
+        # Define the methods on an included module, so we can override
+        # them using super.
+        generated_attribute_methods.module_eval do
+          # Getter
+          attr_reader field_name
+          # Boolean check.
+          define_method "#{field_name}?" do
+            !!send(field_name)
+          end
+          # Writers
+          writers.each do |writer_name|
+            define_method "#{writer_name}=" do |value|
+              write_attribute(field_name, value)
+            end
           end
         end
         # Dirty attribute helpers.
