@@ -1,5 +1,5 @@
 module ActiveZuora
-  module HasManyAssociation
+  module HasManyAssociations
 
     extend ActiveSupport::Concern
 

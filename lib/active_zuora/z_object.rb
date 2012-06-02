@@ -6,7 +6,7 @@ module ActiveZuora
     included do
       include Base
       include Scoping
-      include HasManyAssociation
+      include HasManyAssociations
       include Persistence
       field :id, :string
     end

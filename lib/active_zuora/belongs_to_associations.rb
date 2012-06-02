@@ -1,5 +1,5 @@
 module ActiveZuora
-  module BelongsToAssociation
+  module BelongsToAssociations
 
     extend ActiveSupport::Concern
 
