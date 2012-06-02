@@ -10,6 +10,7 @@ module ActiveZuora
         foreign_key = options[:foreign_key] || :"#{zuora_object_name.underscore}_id"
         # inverse_of by default. You can opt out with :inverse_of => false
         inverse_of = (options[:inverse_of] || zuora_object_name.underscore) unless options[:inverse_of] == false
+        conditions = options[:conditions]
         ivar = "@#{items}"
         # Define the methods on an included module, so we can override
         # them using super.
@@ -25,7 +26,9 @@ module ActiveZuora
             if instance_variable_get(ivar)
               return instance_variable_get(ivar)
             else
-              records = class_name.constantize.where(foreign_key => self.id).all
+              relation = class_name.constantize.where(foreign_key => self.id)
+              relation = relation.merge(conditions) if conditions.present?
+              records = relation.all
               records.each { |record| record.send("#{inverse_of}=", self) } if inverse_of
               instance_variable_set(ivar, records)
               records

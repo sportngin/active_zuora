@@ -102,10 +102,12 @@ module ActiveZuora
       records.each do |record|
         record.delete_if { |key, value| key.to_s.start_with? "@" }
       end
-      records.map do |attributes|
+      records.map! do |attributes|
         # Instantiate the zobject class, but don't track the changes.
         zobject_class.new(attributes).tap { |record| record.clear_changed_attributes }
       end
+      records.sort_by!(&:created_date) if zobject_class.field?(:created_date)
+      records
     rescue Savon::SOAP::Fault => exception
       # Add the zql to the exception message and re-raise.
       exception.message << ": #{zql}"

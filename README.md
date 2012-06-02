@@ -40,6 +40,7 @@ Or, if you prefer, you can define your ZObjects or Complex Types manually.
       field :created_date, :datetime
 
       has_many :subscriptions
+      has_many :active_subscriptions, :conditions => { :status => 'Active' }, :class_name => 'Subscription'
       belongs_to :parent, :class_name => 'Account'
       has_many :children, :class_name => 'Account', :foreign_key => :parent_id, :inverse_of => :parent
 

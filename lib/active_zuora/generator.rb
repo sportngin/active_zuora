@@ -118,6 +118,8 @@ module ActiveZuora
           :class_name => "#{@class_nesting.name}::Account"
         zuora_class.has_many :children, 
           :class_name => "#{@class_nesting.name}::Account", :foreign_key => :parent_id, :inverse_of => :parent
+        zuora_class.belongs_to :bill_to, :class_name => "#{@class_nesting.name}::Contact"
+        zuora_class.belongs_to :sold_to, :class_name => "#{@class_nesting.name}::Contact"
       end
 
       customize 'Amendment' do |zuora_class|
@@ -166,6 +168,7 @@ module ActiveZuora
 
       customize 'Subscription' do |zuora_class|
         zuora_class.exclude_from_queries :ancestor_account_id
+        zuora_class.belongs_to :invoice_owner, :class_name => "#{@class_nesting.name}::Account"
       end
 
       customize 'SubscribeRequest' do |zuora_class|
