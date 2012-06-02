@@ -45,9 +45,13 @@ module ActiveZuora
     end
 
     def merge(relation)
-      dup.tap do |dup| 
-        dup.filters.concat relation.filters
-        dup.filters.uniq!
+      if relation.is_a?(Hash)
+        where(relation)
+      else
+        dup.tap do |dup| 
+          dup.filters.concat relation.filters
+          dup.filters.uniq!
+        end
       end
     end
 

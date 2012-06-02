@@ -43,11 +43,12 @@ describe "ZObject" do
 
       # Test scopes and chaining.
       Z::Account.instance_eval do
-        scope :draft, where(:status => "Draft")
+        scope :draft, :status => "Draft"
+        scope :active, where(:status => "Active")
         scope :since, lambda { |datetime| where(:created_date => { ">=" => datetime }) }
       end
       Z::Account.select(:id).draft.to_zql.should == "select Id from Account where Status = 'Draft'"
-      Z::Account.select(:id).draft.since(Date.new 2012).to_zql.should == "select Id from Account where Status = 'Draft' and CreatedDate >= '2012-01-01T00:00:00+08:00'"
+      Z::Account.select(:id).active.since(Date.new 2012).to_zql.should == "select Id from Account where Status = 'Active' and CreatedDate >= '2012-01-01T00:00:00+08:00'"
 
       # Update all.
       Z::Account.where(:name => @account.name).update_all(:name => "ZObject Integration Test Account 3").should == 1

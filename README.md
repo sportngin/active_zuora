@@ -99,6 +99,7 @@ Delete a record with #delete.
 ## Scopes
 
     ActiveZuora::Account.instance_eval do
+      scope :active, :status => "Active"
       scope :draft, where(:status => "Draft")
       scope :since, lambda { |datetime| where(:created_date => { ">=" => datetime }) }
     end
