@@ -13,6 +13,7 @@ module ActiveZuora
       dup = super
       dup.selected_field_names = dup.selected_field_names.dup
       dup.filters = dup.filters.dup
+      dup.unload
       dup
     end
 
@@ -68,16 +69,23 @@ module ActiveZuora
       where(:id => id).first
     end
 
-    def all
+    def to_a
       @records ||= query(to_zql)
     end
+
+    alias :all :to_a
 
     def loaded?
       !@records.nil?
     end
 
-    def reload
+    def unload
       @records = nil
+      self
+    end
+
+    def reload
+      unload.to_a
       self
     end
 
@@ -122,15 +130,15 @@ module ActiveZuora
       # Update using an attribute hash, or you can pass a block
       # and update the attributes directly on the objects.
       if block_given?
-        all.each { |record| yield record }
+        to_a.each { |record| yield record }
       else
-        all.each { |record| record.attributes = attributes }
+        to_a.each { |record| record.attributes = attributes }
       end
-      zobject_class.update(all)
+      zobject_class.update(to_a)
     end
 
     def delete_all
-      zobject_class.delete(all.map(&:id))
+      zobject_class.delete(to_a.map(&:id))
     end
 
     protected
@@ -139,7 +147,7 @@ module ActiveZuora
       # This is how the chaing can happen on class methods or named scopes on the 
       # ZObject class.
       if Array.method_defined?(method)
-        all.send(method, *args, &block)
+        to_a.send(method, *args, &block)
       elsif zobject_class.respond_to?(method)
         scoped { zobject_class.send(method, *args, &block) }
       else

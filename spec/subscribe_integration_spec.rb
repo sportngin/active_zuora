@@ -4,7 +4,7 @@ describe "Subscribe" do
 
   integration_test do
 
-    before do
+    before :all do
       # Setup product.
       @product = Z::Product.where(:name => "Awesome Product").first || 
         Z::Product.create!(
@@ -38,7 +38,7 @@ describe "Subscribe" do
         )
     end
 
-    after do
+    after :all do
       @account.delete if @account
       @product.delete
     end

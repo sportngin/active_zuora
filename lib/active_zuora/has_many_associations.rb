@@ -8,30 +8,20 @@ module ActiveZuora
       def has_many(items, options={})
         class_name = options[:class_name] || nested_class_name(items.to_s.singularize.camelize)
         foreign_key = options[:foreign_key] || :"#{zuora_object_name.underscore}_id"
-        # inverse_of by default. You can opt out with :inverse_of => false
-        inverse_of = (options[:inverse_of] || zuora_object_name.underscore) unless options[:inverse_of] == false
         conditions = options[:conditions]
         ivar = "@#{items}"
         # Define the methods on an included module, so we can override
         # them using super.
         generated_attribute_methods.module_eval do
-          define_method("#{items}_loaded?") do
-            !instance_variable_get(ivar).nil?
-          end
-          define_method("reload_#{items}") do
-            instance_variable_set(ivar, nil)
-            send(items)
-          end
           define_method(items) do
             if instance_variable_get(ivar)
               return instance_variable_get(ivar)
             else
               relation = class_name.constantize.where(foreign_key => self.id)
               relation = relation.merge(conditions) if conditions.present?
-              records = relation.all
-              records.each { |record| record.send("#{inverse_of}=", self) } if inverse_of
-              instance_variable_set(ivar, records)
-              records
+              proxy = HasManyProxy.new(self, relation, options)
+              instance_variable_set(ivar, proxy)
+              proxy
             end
           end
         end
