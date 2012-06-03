@@ -113,74 +113,77 @@ module ActiveZuora
       # Also, it's possible classes customized here weren't defined
       # in your wsdl, so it will only customize them if they are defined.
 
-      customize 'Account' do |zuora_class|
-        zuora_class.belongs_to :parent, 
-          :class_name => "#{@class_nesting.name}::Account"
-        zuora_class.has_many :children, 
-          :class_name => "#{@class_nesting.name}::Account", :foreign_key => :parent_id, :inverse_of => :parent
-        zuora_class.belongs_to :bill_to, :class_name => "#{@class_nesting.name}::Contact"
-        zuora_class.belongs_to :sold_to, :class_name => "#{@class_nesting.name}::Contact"
+      nesting = @class_nesting
+
+      customize 'Account' do
+        belongs_to :parent, 
+          :class_name => "#{nesting.name}::Account"
+        has_many :children, 
+          :class_name => "#{nesting.name}::Account", :foreign_key => :parent_id, :inverse_of => :parent
+        belongs_to :bill_to, :class_name => "#{nesting.name}::Contact"
+        belongs_to :sold_to, :class_name => "#{nesting.name}::Contact"
       end
 
-      customize 'Amendment' do |zuora_class|
-        zuora_class.exclude_from_queries :rate_plan_data, 
+      customize 'Amendment' do
+        exclude_from_queries :rate_plan_data, 
           :destination_account_id, :destination_invoice_owner_id  
       end
 
-      customize 'Import' do |zuora_class|
-        zuora_class.exclude_from_queries :file_content
+      customize 'Import' do
+        exclude_from_queries :file_content
       end
 
-      customize 'InvoiceItemAdjustment' do |zuora_class|
-        zuora_class.exclude_from_queries :customer_name, :customer_number
+      customize 'InvoiceItemAdjustment' do
+        exclude_from_queries :customer_name, :customer_number
       end
 
-      customize 'Payment' do |zuora_class|
-        zuora_class.exclude_from_queries :applied_invoice_amount, 
+      customize 'Payment' do
+        exclude_from_queries :applied_invoice_amount, 
           :gateway_option_data, :invoice_id, :invoice_number
       end
 
-      customize 'PaymentMethod' do |zuora_class|
-        zuora_class.exclude_from_queries :ach_account_number, :credit_card_number,
+      customize 'PaymentMethod' do
+        exclude_from_queries :ach_account_number, :credit_card_number,
           :credit_card_security_code, :gateway_option_data, :skip_validation
       end
 
-      customize 'ProductRatePlanCharge' do |zuora_class|
-        zuora_class.exclude_from_queries :product_rate_plan_charge_tier_data
+      customize 'ProductRatePlanCharge' do
+        exclude_from_queries :product_rate_plan_charge_tier_data
       end
 
-      customize 'Usage' do |zuora_class|
-        zuora_class.exclude_from_queries :ancestor_account_id, :invoice_id, :invoice_number
+      customize 'Usage' do
+        exclude_from_queries :ancestor_account_id, :invoice_id, :invoice_number
       end
 
-      customize 'RatePlanCharge' do |zuora_class|
-        zuora_class.exclude_from_queries :rollover_balance
+      customize 'RatePlanCharge' do
+        exclude_from_queries :rollover_balance
         # Can only use overageprice or price or includedunits or 
         # discountamount or discountpercentage in one query.
         # We'll pick price.
-        zuora_class.exclude_from_queries :overage_price, :included_units, 
+        exclude_from_queries :overage_price, :included_units, 
           :discount_amount, :discount_percentage
       end
 
-      customize 'Refund' do |zuora_class|
-        zuora_class.exclude_from_queries :gateway_option_data, :payment_id
+      customize 'Refund' do
+        exclude_from_queries :gateway_option_data, :payment_id
       end
 
-      customize 'Subscription' do |zuora_class|
-        zuora_class.exclude_from_queries :ancestor_account_id
-        zuora_class.belongs_to :invoice_owner, :class_name => "#{@class_nesting.name}::Account"
+      customize 'Subscription' do
+        exclude_from_queries :ancestor_account_id
+        belongs_to :invoice_owner, :class_name => "#{nesting.name}::Account"
       end
 
-      customize 'SubscribeRequest' do |zuora_class|
-        zuora_class.send :include, Subscribe
+      customize 'SubscribeRequest' do
+        send :include, Subscribe
       end
     end
 
     def customize(zuora_class_name, &block)
       if @class_nesting.const_defined?(zuora_class_name)
-        yield @class_nesting.const_get(zuora_class_name)
+        @class_nesting.const_get(zuora_class_name).instance_eval(&block)
       end
     end
+
 
     def element_is_an_array?(element)
       attribute_is_more_than_one?(element.attribute("minOccurs")) ||
