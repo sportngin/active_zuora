@@ -7,8 +7,8 @@ module ActiveZuora
       class << self
 
         # Delegate to :scoped
-        delegate :find, :all, :to => :scoped
-        delegate :select, :where, :and, :or, :to => :scoped
+        delegate :find, :all, :find_each, :to => :scoped
+        delegate :select, :where, :and, :or, :order, :to => :scoped
         delegate :first, :last, :each, :map, :any?, :empty?, :blank?, :present?, :size, :count, :to => :scoped
 
         # Keep track of a current scope.

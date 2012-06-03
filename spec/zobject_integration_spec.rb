@@ -40,6 +40,17 @@ describe "ZObject" do
       Z::Account.where(:name => "Some Random Name").or(:name => @account.name).should include(@account)
       Z::Account.where(:created_date => { ">=" => Date.today }).should include(@account)
       Z::Account.where(:created_date => { ">" => Time.now }).or(:name => @account.name).should include(@account)
+      Z::Account.where(:created_date => { ">=" => Date.today }).find_each do |account|
+        account.should be_present
+      end
+
+      # Test ordering
+      unordered = Z::Account.where(:created_date => { ">=" => Date.today })
+      ordered = unordered.order(:name, :desc)
+      unordered.order_attribute.should == :created_date
+      unordered.order_direction.should == :asc
+      ordered.order_attribute.should == :name
+      ordered.order_direction.should == :desc
 
       # Test scopes and chaining.
       Z::Account.instance_eval do

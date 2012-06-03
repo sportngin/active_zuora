@@ -1,12 +1,13 @@
 module ActiveZuora
   class Relation
 
-    attr_accessor :selected_field_names, :filters
+    attr_accessor :selected_field_names, :filters, :order_attribute, :order_direction
 
     attr_reader :zobject_class
 
     def initialize(zobject_class, selected_field_names=[:id])
       @zobject_class, @selected_field_names, @filters = zobject_class, selected_field_names, []
+      @order_attribute, @order_direction = :created_date, :asc
     end
 
     def dup
@@ -35,6 +36,13 @@ module ActiveZuora
       dup.tap { |dup| dup.filters << ['or', conditions] }\
     end
 
+    def order(attribute, direction = :asc)
+      dup.tap do |dup|
+        dup.order_attribute = attribute
+        dup.order_direction = direction
+      end
+    end
+
     def scoped
       # Account.select(:id).where(:status => "Draft") do
       #   Account.all # => select id from Account where status = "Draft"
@@ -52,6 +60,8 @@ module ActiveZuora
         dup.tap do |dup| 
           dup.filters.concat relation.filters
           dup.filters.uniq!
+          dup.order_attribute = relation.order_attribute
+          dup.order_direction = relation.order_direction
         end
       end
     end
@@ -69,8 +79,18 @@ module ActiveZuora
       where(:id => id).first
     end
 
+    def find_each(&block)
+      # Iterate through each item, but don't save the results in memory.
+      if loaded?
+        # If we're already loaded, iterate through the cached records.
+        to_a.each(&block)
+      else
+        query.each(&block)
+      end
+    end
+
     def to_a
-      @records ||= query(to_zql)
+      @records ||= query
     end
 
     alias :all :to_a
@@ -89,33 +109,24 @@ module ActiveZuora
       self
     end
 
-    def query(zql)
+    def query(&block)
       # Keep querying until all pages are retrieved.
       # Throws an exception for an invalid query.
-      response = zobject_class.connection.request(:query){ |soap| soap.body = { :query_string => zql } }
+      response = zobject_class.connection.request(:query){ |soap| soap.body = { :query_string => to_zql } }
       query_response = response[:query_response]
-      records = query_response[:result][:records] || []
-      # Sometimes Zuora will return only a single record, not in an array.
-      records = [records] unless records.is_a?(Array)
+      records = objectify_query_results(query_response[:result][:records])
+      records.each(&:block) if block_given?
       # If there are more pages of records, keep fetching
       # them until done.
       until query_response[:result][:done]
         query_response = zobject_class.connection.request(:query_more) do |soap|
           soap.body = { :query_locator => response[:query_response][:result][:query_locator] }
         end[:query_more_response]
-        records.concat query_response[:result][:records]
+        more_records = objectify_query_results(query_response[:result][:records])
+        more_records.each(&:block) if block_given?
+        records.concat more_records
       end
-      # Strip any noisy attributes from the results that have to do with 
-      # SOAP namespaces.
-      records.each do |record|
-        record.delete_if { |key, value| key.to_s.start_with? "@" }
-      end
-      records.map! do |attributes|
-        # Instantiate the zobject class, but don't track the changes.
-        zobject_class.new(attributes).tap { |record| record.clear_changed_attributes }
-      end
-      records.sort_by!(&:created_date) if zobject_class.field?(:created_date)
-      records
+      sort_records!(records)
     rescue Savon::SOAP::Fault => exception
       # Add the zql to the exception message and re-raise.
       exception.message << ": #{zql}"
@@ -201,6 +212,34 @@ module ActiveZuora
       else
         value
       end
+    end
+
+    def objectify_query_results(results)
+      return [] if results.blank?
+      # Sometimes Zuora will return only a single record, not in an array.
+      results = [results] unless results.is_a?(Array)
+      results.map do |attributes|
+        # Strip any noisy attributes from the results that have to do with 
+        # SOAP namespaces.
+        attributes.delete_if { |key, value| key.to_s.start_with? "@" }
+        # Instantiate the zobject class, but don't track the changes.
+        zobject_class.new(attributes).tap { |record| record.clear_changed_attributes }
+      end
+    end
+
+    def sort_records!(records)
+      return records unless order_attribute.present?
+      records.sort! do |a, b|
+        if a.nil?
+          -1
+        elsif b.nil?
+          1
+        else
+          a.send(order_attribute) <=> b.send(order_attribute)
+        end
+      end
+      records.reverse! if order_direction == :desc
+      records
     end
 
   end

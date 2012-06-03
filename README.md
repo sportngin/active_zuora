@@ -97,6 +97,18 @@ Delete a record with #delete.
 
     ActiveZuora::Account.select(:id, :name).where(:created_date => { "<" => Date.yesterday })
 
+There is no "order by" clause in the ZQL query language, but ActiveZuora's query system can post-sort results for you:
+
+    ActiveZuora::Account.where(:status => "Active").order(:name)
+
+    ActiveZuora::Account.where(:status => "Draft").order(:created_date, :desc)
+
+By default, every Query object caches the results once you call an array-like method on it.  However, if you know you'll have a very large result set and you just want to iterate through them without keeping them, you can use `find_each`.
+
+    ActiveZuora::Account.where(:status => "Active").find_each do |account|
+      ...
+    end
+
 ## Scopes
 
     ActiveZuora::Account.instance_eval do
