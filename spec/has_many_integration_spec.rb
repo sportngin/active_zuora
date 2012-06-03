@@ -25,11 +25,13 @@ describe "HasManyRelations" do
       @account.delete if @account
     end
 
-    it "can specify conditions" do
+    it "can specify conditions and order" do
       Z::Account.instance_eval do
-        has_many :billies, :conditions => { :first_name => "Billy" }, :class_name => 'Z::Contact'
+        has_many :billies, :conditions => { :first_name => "Billy" }, :order => [:first_name, :desc], :class_name => 'Z::Contact'
       end
       @account.billies.to_a == [@billy]
+      @account.billies.scope.order_attribute.should == :first_name
+      @account.billies.scope.order_direction.should == :desc
     end
 
     it "can behave like an array" do

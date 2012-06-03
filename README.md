@@ -39,8 +39,10 @@ Or, if you prefer, you can define your ZObjects or Complex Types manually.
       field :balance, :decimal
       field :created_date, :datetime
 
-      has_many :subscriptions
-      has_many :active_subscriptions, :conditions => { :status => 'Active' }, :class_name => 'Subscription'
+      has_many :subscriptions, :order => :name
+      has_many :active_subscriptions, :class_name => 'Subscription',
+        :conditions => { :status => 'Active' }, 
+        :order => [ :name, :desc ]
       belongs_to :parent, :class_name => 'Account'
       has_many :children, :class_name => 'Account', :foreign_key => :parent_id, :inverse_of => :parent
 
