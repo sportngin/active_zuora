@@ -26,7 +26,7 @@ module ActiveZuora
     end
 
     def delete
-      self.class.delete(id)
+      self.class.delete(id) > 0
     end
 
     def reload

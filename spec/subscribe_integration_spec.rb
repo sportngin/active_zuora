@@ -4,13 +4,13 @@ describe "Subscribe" do
 
   integration_test do
 
-    before :all do
+    before do
       # Setup product.
       @product = Z::Product.where(:name => "Awesome Product").first || 
         Z::Product.create!(
           :name => "Awesome Product",
           :effective_start_date => Date.today,
-          :effective_end_date => Date.tomorrow
+          :effective_end_date => Date.today + 10.years
         )
       @product_rate_plan = @product.product_rate_plans.first ||
         Z::ProductRatePlan.create!(
@@ -38,12 +38,12 @@ describe "Subscribe" do
         )
     end
 
-    after :all do
-      @account.delete if @account
+    after do
+      @account.delete
       @product.delete
     end
 
-    it "Can successfully subscribe using a new account" do
+    it "Can successfully subscribe and amend using a new account" do
 
       subscribe_request = Z::SubscribeRequest.new(
         :account => {
@@ -67,7 +67,10 @@ describe "Subscribe" do
           :work_email => "conny.client@example.com"
         },
         :subscription_data => {
-          :subscription => {},
+          :subscription => {
+            :contract_effective_date => Date.today,
+            :service_activation_date => Date.today
+          },
           :rate_plan_data => {
             :rate_plan => {
               :product_rate_plan_id => @product_rate_plan.id,
@@ -78,16 +81,43 @@ describe "Subscribe" do
                 :price => 45.00
               }
             }
-          },
+          }
         }
       )
 
       subscribe_request.subscribe!
-      @account = Z::Account.find(subscribe_request.result[:account_id])
-      @account.should_not be_nil
-      @account.subscriptions.first.rate_plans.first.rate_plan_charges.first.
+      @account = subscribe_request.account
+      subscribe_request.account.new_record?.should be_false
+      subscribe_request.account.changed?.should be_false
+      subscribe_request.subscription_data.subscription.new_record?.should be_false
+      subscribe_request.subscription_data.subscription.rate_plans.first.
+        rate_plan_charges.first.
         product_rate_plan_charge.should == @product_rate_plan_charge
+      subscribe_request.result.should be_present
 
+      # Now amend the subscription
+      subscription = subscribe_request.subscription_data.subscription.reload
+      amend_request = Z::AmendRequest.new(
+        :amendments => {
+          :name => "Remove Awesome Plan",
+          :contract_effective_date => Date.today,
+          :service_activation_date => Date.today,
+          :subscription_id => subscription.id,
+          :type => "RemoveProduct",
+          :rate_plan_data => {
+            :rate_plan => {
+              :amendment_subscription_rate_plan_id => subscription.rate_plans.first.id
+            }
+          }
+        },
+        :amend_options => {
+          :generate_invoice => false,
+          :process_payments => false
+        }
+      ) 
+      amend_request.amend!
+      amend_request.amendments.first.new_record?.should be_false
+      amend_request.result.should be_present
     end
 
   end

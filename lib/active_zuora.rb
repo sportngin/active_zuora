@@ -14,6 +14,7 @@ require 'active_zuora/has_many_proxy'
 require 'active_zuora/has_many_associations'
 require 'active_zuora/z_object'
 require 'active_zuora/subscribe'
+require 'active_zuora/amend'
 
 module ActiveZuora
 

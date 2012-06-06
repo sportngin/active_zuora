@@ -129,6 +129,10 @@ module ActiveZuora
           :destination_account_id, :destination_invoice_owner_id  
       end
 
+      customize 'AmendRequest' do
+        include Amend
+      end
+
       customize 'Import' do
         exclude_from_queries :file_content
       end
@@ -174,7 +178,7 @@ module ActiveZuora
       end
 
       customize 'SubscribeRequest' do
-        send :include, Subscribe
+        include Subscribe
       end
     end
 
