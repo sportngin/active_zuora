@@ -68,7 +68,7 @@ module ActiveZuora
             when /\A(zns:|ons:)/
               zuora_class.field field_name, :object, 
                 :zuora_name => zuora_name, :array => is_array, 
-                :class_name => "#{@class_nesting.name}::#{field_type.split(':').last}"
+                :class_name => field_type.split(':').last
             else
               puts "Unkown field type: #{field_type}"
             end
@@ -116,17 +116,20 @@ module ActiveZuora
       nesting = @class_nesting
 
       customize 'Account' do
-        belongs_to :parent, 
-          :class_name => "#{nesting.name}::Account"
-        has_many :children, 
-          :class_name => "#{nesting.name}::Account", :foreign_key => :parent_id, :inverse_of => :parent
-        belongs_to :bill_to, :class_name => "#{nesting.name}::Contact"
-        belongs_to :sold_to, :class_name => "#{nesting.name}::Contact"
+        belongs_to :bill_to, :class_name => 'Contact' if field? :bill_to
+        if field? :parent_id
+          belongs_to :parent, :class_name => 'Account'
+          has_many :children, :class_name => 'Account', :foreign_key => :parent_id, :inverse_of => :parent
+        end
+        belongs_to :sold_to, :class_name => 'Contact' if field? :sold_to
+        validates :currency, :presence => true if field? :currency
+        validates :name, :presence => true if field? :name
+        validates :status, :presence => true if field? :status
       end
 
       customize 'Amendment' do
         exclude_from_queries :rate_plan_data, 
-          :destination_account_id, :destination_invoice_owner_id  
+          :destination_account_id, :destination_invoice_owner_id
       end
 
       customize 'AmendRequest' do
@@ -174,7 +177,7 @@ module ActiveZuora
 
       customize 'Subscription' do
         exclude_from_queries :ancestor_account_id
-        belongs_to :invoice_owner, :class_name => "#{nesting.name}::Account"
+        belongs_to :invoice_owner, :class_name => 'Account'
       end
 
       customize 'SubscribeRequest' do

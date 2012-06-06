@@ -102,7 +102,7 @@ module ActiveZuora
           when :decimal then DecimalField.new(name, namespace, options)
           when :datetime then DateTimeField.new(name, namespace, options)
           when :object
-            class_name = options[:class_name] || nested_class_name(name.to_s.camelize)
+            class_name = nested_class_name(options[:class_name] || name.to_s.camelize)
             ObjectField.new(name, namespace, class_name, options)
           else
             ArgumentError.new "Unknown field type: #{type}"

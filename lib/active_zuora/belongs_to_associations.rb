@@ -21,7 +21,7 @@ module ActiveZuora
               return instance_variable_get(ivar)
             else
               # Otherwise find it.
-              record = class_name.constantize.find self.send(foreign_key)
+              record = self.class.nested_class(class_name).find self.send(foreign_key)
               send("#{item}=", record)
               record
             end
