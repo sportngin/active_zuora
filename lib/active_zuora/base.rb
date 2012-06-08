@@ -67,13 +67,6 @@ module ActiveZuora
         (name.split("::")[0..-2] << unnested_class_name).join("::")
       end
 
-      def nested_class(class_name)
-        # Will check for the nested class name first.
-        nested_class_name(class_name).constantize
-      rescue
-        class_name.constantize
-      end
-
     end
 
   end

@@ -20,7 +20,7 @@ module ActiveZuora
             if instance_variable_get(ivar)
               return instance_variable_get(ivar)
             else
-              relation = self.class.nested_class(class_name).where(foreign_key => self.id)
+              relation = class_name.constantize.where(foreign_key => self.id)
               relation = relation.merge(conditions) if conditions.present?
               relation.order_attribute = order_attribute if order_attribute.present?
               relation.order_direction = order_direction if order_direction.present?

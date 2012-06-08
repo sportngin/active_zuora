@@ -83,7 +83,7 @@ describe "ZObject" do
       @account.children.each { |child| child.parent_loaded?.should be_true }
 
       # Delete all
-      Z::Account.where(:name => @account.name).delete_all.should == 1
+      Z::Account.where(:name => @account.name).delete_all.should >= 1
       @account = nil
 
     end
