@@ -177,7 +177,12 @@ module ActiveZuora
 
       customize 'Subscription' do
         exclude_from_queries :ancestor_account_id
-        belongs_to :invoice_owner, :class_name => nested_class_name('Account')
+        belongs_to :creator_account, :class_name => nested_class_name('Account') if field? :creator_account_id
+        belongs_to :creator_invoice_owner, :class_name => nested_class_name('Account') if field? :creator_invoice_owner_id
+        belongs_to :invoice_owner, :class_name => nested_class_name('Account') if field? :invoice_owner_id
+        belongs_to :original, :class_name => name if field? :original_id
+        belongs_to :original_subscription, :class_name => name if field? :original_subscription_id
+        belongs_to :previous_subscription, :class_name => name if field? :previous_subscription_id
       end
 
       customize 'SubscribeRequest' do
