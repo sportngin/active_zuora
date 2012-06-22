@@ -17,10 +17,11 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.extra_rdoc_files = [ "README.md" ]
 
-  s.add_runtime_dependency('savon', ["~> 0.9.9"])
-  s.add_runtime_dependency('activesupport', [">= 3.0.0", "< 4.0.0"])
-  s.add_runtime_dependency('activemodel', [">= 3.0.0", "< 4.0.0"])
+  s.add_runtime_dependency('savon', [">= 1.0.0"])
+  s.add_runtime_dependency('wasabi', [">= 2.4.1"])
+  s.add_runtime_dependency('activesupport', [">= 3.0.0"])
+  s.add_runtime_dependency('activemodel', [">= 3.0.0"])
 
-  s.add_development_dependency('rake', ["~> 0.8.7"])
-  s.add_development_dependency('rspec', ["~> 2.8.0"])
+  s.add_development_dependency('rake')
+  s.add_development_dependency('rspec')
 end

@@ -20,6 +20,10 @@ module ActiveZuora
       # xmlns:zns="http://api.zuora.com/" 
       # xmlns:ons="http://object.api.zuora.com/"
       # xmlns:fns="http://fault.api.zuora.com/"
+
+      # Normally we'd like to simply use @document.types since wasabi parses the 
+      # document for us.  However, it does not yet parse element attributes such 
+      # as minOccurs and maxOccurs.
       @document.xpath('.//xs:schema[@targetNamespace]').each do |schema|
         namespace = schema.attribute("targetNamespace").value
 
@@ -112,8 +116,6 @@ module ActiveZuora
       # based on the existing Zuora documentation.
       # Also, it's possible classes customized here weren't defined
       # in your wsdl, so it will only customize them if they are defined.
-
-      nesting = @class_nesting
 
       customize 'Account' do
         belongs_to :bill_to, :class_name => nested_class_name('Contact') if field? :bill_to
