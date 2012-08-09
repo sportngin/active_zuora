@@ -1,5 +1,7 @@
 # active_zuora - Auto-Generated ActiveModel Interface for Zuora
 
+[![TravisCI](https://secure.travis-ci.org/tstmedia/active_zuora.png "TravisCI")](http://travis-ci.org/tstmedia/active_zuora "Travis-CI ActiveZuora")
+
 Use Zuora's API like ActiveRecord.  Auto-generate all the classes from the wsdl file, or easily declare your own.
 
 ## Configuration
