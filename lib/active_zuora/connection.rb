@@ -12,6 +12,7 @@ module ActiveZuora
       @session_timeout = configuration[:session_timeout] || 15.minutes
       @soap_client = Savon::Client.new do
         wsdl.document = configuration[:wsdl] || WSDL
+        http.proxy = configuration[:http_proxy] if configuration[:http_proxy]
       end
     end
 
