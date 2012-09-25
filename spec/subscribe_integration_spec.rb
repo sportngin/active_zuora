@@ -28,7 +28,7 @@ describe "Subscribe" do
           :product_rate_plan_charge_tier_data => {
             :product_rate_plan_charge_tier => {
               :active => true,
-              :currency => "USD",
+              :currency => "AUD",
               :tier => 1,
               :price => 50.00,
               :starting_unit => 1,
@@ -48,7 +48,7 @@ describe "Subscribe" do
       subscribe_request = Z::SubscribeRequest.new(
         :account => {
           :name => "Joe Customer",
-          :currency => "USD",
+          :currency => "AUD",
           :bill_cycle_day => 1,
           :payment_term => "Due Upon Receipt",
           :batch => "Batch1"
@@ -64,12 +64,15 @@ describe "Subscribe" do
         :bill_to_contact => { 
           :first_name => "Conny",
           :last_name => "Client",
+          :country => "AU",
           :work_email => "conny.client@example.com"
         },
         :subscription_data => {
           :subscription => {
             :contract_effective_date => Date.today,
-            :service_activation_date => Date.today
+            :service_activation_date => Date.today,
+            :initial_term => 12,
+            :renewal_term => 12
           },
           :rate_plan_data => {
             :rate_plan => {
@@ -118,6 +121,97 @@ describe "Subscribe" do
       amend_request.amend!
       amend_request.amendments.first.new_record?.should be_false
       amend_request.result.should be_present
+    end
+
+    it "Can successfully subscribe and generate an invoice" do
+
+      subscribe_request = Z::SubscribeRequest.new(
+        :account => {
+          :name => "Joe Customer",
+          :currency => "AUD",
+          :bill_cycle_day => 1,
+          :payment_term => "Due Upon Receipt",
+          :batch => "Batch1"
+        },
+        :payment_method => {
+          :type => "CreditCard",
+          :credit_card_holder_name => "Robert Paulson",
+          :credit_card_type => "MasterCard",
+          :credit_card_number => "4111111111111111",
+          :credit_card_expiration_month => 1,
+          :credit_card_expiration_year => (Date.today.year + 1)
+        },
+        :bill_to_contact => { 
+          :first_name => "Conny",
+          :last_name => "Client",
+          :work_email => "conny.client@example.com",
+          :country => "AU"
+        },
+        :subscription_data => {
+          :subscription => {
+            :contract_effective_date => Date.today,
+            :service_activation_date => Date.today,
+            :initial_term => 12,
+            :renewal_term => 12,
+            :term_type => 'TERMED'
+          },
+          :rate_plan_data => {
+            :rate_plan => {
+              :product_rate_plan_id => @product_rate_plan.id,
+            },
+            :rate_plan_charge_data => {
+              :rate_plan_charge => {
+                :product_rate_plan_charge_id => @product_rate_plan_charge.id,
+                :price => 45.00
+              }
+            }
+          }
+        }
+      )
+
+      subscribe_request.subscribe!
+      @account = subscribe_request.account
+      subscribe_request.account.new_record?.should be_false
+      subscribe_request.account.changed?.should be_false
+      subscribe_request.subscription_data.subscription.new_record?.should be_false
+      subscribe_request.subscription_data.subscription.rate_plans.first.
+        rate_plan_charges.first.
+        product_rate_plan_charge.should == @product_rate_plan_charge
+      subscribe_request.result.should be_present
+
+      # Now renew the subscription
+      subscription = subscribe_request.subscription_data.subscription.reload
+
+      amend_request = Z::AmendRequest.new(
+        :amendments => {
+          :name => "Renew",
+          :contract_effective_date => Date.today + 12.months,
+          :effective_date => Date.today,
+          :subscription_id => subscription.id,
+          :type => "Renewal",
+          :auto_renew => false,
+          :renewal_term => 12
+        },
+        :amend_options => {
+          :generate_invoice => false,
+          :process_payments => false
+        }
+      )
+      amend_request.amend!
+      amend_request.amendments.first.new_record?.should be_false
+      amend_request.result.should be_present
+
+      invoice = Z::Invoice.new(
+          account_id: subscribe_request.account.id,
+          invoice_date: Date.today,
+          target_date: Date.today + 12.months,
+          includes_one_time: false,
+          includes_recurring: true,
+          includes_usage: false
+      )
+      invoice.generate!
+      invoice.id.should be_present
+      invoice.account_id.should == subscribe_request.account.id
     end
 
   end

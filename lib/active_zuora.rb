@@ -15,6 +15,7 @@ require 'active_zuora/has_many_associations'
 require 'active_zuora/z_object'
 require 'active_zuora/subscribe'
 require 'active_zuora/amend'
+require 'active_zuora/generate'
 
 module ActiveZuora
 

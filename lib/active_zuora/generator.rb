@@ -11,6 +11,7 @@ module ActiveZuora
     end
 
     def generate_classes
+      
       # Defines the classes based on the wsdl document.
       # Assumes the following namespaces in the wsdl.
       # xmlns="http://schemas.xmlsoap.org/wsdl/" 
@@ -138,6 +139,10 @@ module ActiveZuora
 
       customize 'Import' do
         exclude_from_queries :file_content
+      end
+
+      customize 'Invoice' do
+        include Generate
       end
 
       customize 'InvoiceItemAdjustment' do
