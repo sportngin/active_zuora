@@ -8,5 +8,5 @@ task :default => :spec
 
 desc "Run library specs"
 RSpec::Core::RakeTask.new do |t|
-  t.pattern = ["./spec/active_zuora/**/*_spec.rb"]
+  t.pattern = ["./spec/**/*_spec.rb"]
 end
