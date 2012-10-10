@@ -6,7 +6,7 @@ describe "Subscribe" do
 
     before do
       # Setup product.
-      @product = Z::Product.where(:name => "Awesome Product").first || 
+      @product = Z::Product.where(:name => "Awesome Product").first ||
         Z::Product.create!(
           :name => "Awesome Product",
           :effective_start_date => Date.today,
@@ -28,7 +28,7 @@ describe "Subscribe" do
           :product_rate_plan_charge_tier_data => {
             :product_rate_plan_charge_tier => {
               :active => true,
-              :currency => "AUD",
+              :currency => "USD",
               :tier => 1,
               :price => 50.00,
               :starting_unit => 1,
@@ -48,7 +48,7 @@ describe "Subscribe" do
       subscribe_request = Z::SubscribeRequest.new(
         :account => {
           :name => "Joe Customer",
-          :currency => "AUD",
+          :currency => "USD",
           :bill_cycle_day => 1,
           :payment_term => "Due Upon Receipt",
           :batch => "Batch1"
@@ -61,7 +61,7 @@ describe "Subscribe" do
           :credit_card_expiration_month => 1,
           :credit_card_expiration_year => (Date.today.year + 1)
         },
-        :bill_to_contact => { 
+        :bill_to_contact => {
           :first_name => "Conny",
           :last_name => "Client",
           :country => "AU",
@@ -117,7 +117,7 @@ describe "Subscribe" do
           :generate_invoice => false,
           :process_payments => false
         }
-      ) 
+      )
       amend_request.amend!
       amend_request.amendments.first.new_record?.should be_false
       amend_request.result.should be_present
@@ -128,7 +128,7 @@ describe "Subscribe" do
       subscribe_request = Z::SubscribeRequest.new(
         :account => {
           :name => "Joe Customer",
-          :currency => "AUD",
+          :currency => "USD",
           :bill_cycle_day => 1,
           :payment_term => "Due Upon Receipt",
           :batch => "Batch1"
@@ -141,7 +141,7 @@ describe "Subscribe" do
           :credit_card_expiration_month => 1,
           :credit_card_expiration_year => (Date.today.year + 1)
         },
-        :bill_to_contact => { 
+        :bill_to_contact => {
           :first_name => "Conny",
           :last_name => "Client",
           :work_email => "conny.client@example.com",
