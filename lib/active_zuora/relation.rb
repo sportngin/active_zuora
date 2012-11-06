@@ -129,7 +129,7 @@ module ActiveZuora
       sort_records!(records)
     rescue Savon::SOAP::Fault => exception
       # Add the zql to the exception message and re-raise.
-      exception.message << ": #{zql}"
+      exception.message << ": #{to_zql}"
       raise
     end
 
