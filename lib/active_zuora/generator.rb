@@ -11,14 +11,14 @@ module ActiveZuora
     end
 
     def generate_classes
-      
+
       # Defines the classes based on the wsdl document.
       # Assumes the following namespaces in the wsdl.
-      # xmlns="http://schemas.xmlsoap.org/wsdl/" 
-      # xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
-      # xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+      # xmlns="http://schemas.xmlsoap.org/wsdl/"
+      # xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+      # xmlns:xs="http://www.w3.org/2001/XMLSchema"
       # xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-      # xmlns:zns="http://api.zuora.com/" 
+      # xmlns:zns="http://api.zuora.com/"
       # xmlns:ons="http://object.api.zuora.com/"
       # xmlns:fns="http://fault.api.zuora.com/"
       @document.xpath('.//xs:schema[@targetNamespace]').each do |schema|
@@ -28,7 +28,7 @@ module ActiveZuora
           class_name = complex_type.attribute("name").value
           # Skip the zObject base class, we define our own.
           next if class_name == "zObject"
-          
+
           zuora_class = Class.new
           @class_nesting.const_set(class_name, zuora_class)
           @classes << zuora_class
@@ -52,23 +52,23 @@ module ActiveZuora
 
             case field_type
             when "string", "xs:string", "zns:ID", "xs:base64Binary"
-              zuora_class.field field_name, :string, 
+              zuora_class.field field_name, :string,
                 :zuora_name => zuora_name, :array => is_array
             when "boolean", "xs:boolean"
-              zuora_class.field field_name, :boolean, 
+              zuora_class.field field_name, :boolean,
                 :zuora_name => zuora_name, :array => is_array
             when "int", "short", "long", "xs:int"
-              zuora_class.field field_name, :integer, 
+              zuora_class.field field_name, :integer,
                 :zuora_name => zuora_name, :array => is_array
             when "decimal"
-              zuora_class.field field_name, :decimal, 
+              zuora_class.field field_name, :decimal,
                 :zuora_name => zuora_name, :array => is_array
             when "dateTime"
-              zuora_class.field field_name, :datetime, 
+              zuora_class.field field_name, :datetime,
                 :zuora_name => zuora_name, :array => is_array
             when /\A(zns:|ons:)/
-              zuora_class.field field_name, :object, 
-                :zuora_name => zuora_name, :array => is_array, 
+              zuora_class.field field_name, :object,
+                :zuora_name => zuora_name, :array => is_array,
                 :class_name => zuora_class.nested_class_name(field_type.split(':').last)
             else
               puts "Unkown field type: #{field_type}"
@@ -129,7 +129,7 @@ module ActiveZuora
       end
 
       customize 'Amendment' do
-        exclude_from_queries :rate_plan_data, 
+        exclude_from_queries :rate_plan_data,
           :destination_account_id, :destination_invoice_owner_id
       end
 
@@ -150,7 +150,7 @@ module ActiveZuora
       end
 
       customize 'Payment' do
-        exclude_from_queries :applied_invoice_amount, 
+        exclude_from_queries :applied_invoice_amount,
           :gateway_option_data, :invoice_id, :invoice_number
       end
 
@@ -169,10 +169,10 @@ module ActiveZuora
 
       customize 'RatePlanCharge' do
         exclude_from_queries :rollover_balance
-        # Can only use overageprice or price or includedunits or 
+        # Can only use overageprice or price or includedunits or
         # discountamount or discountpercentage in one query.
         # We'll pick price.
-        exclude_from_queries :overage_price, :included_units, 
+        exclude_from_queries :overage_price, :included_units,
           :discount_amount, :discount_percentage
       end
 
