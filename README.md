@@ -152,4 +152,4 @@ http://www.opensource.org/licenses/MIT
 
 Bug reports and feature requests can be filed as github issues here: 
 
-https://github.com/edlebert/active_zuora/issues
+https://github.com/tstmedia/active_zuora/issues
