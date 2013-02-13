@@ -77,44 +77,34 @@ module ActiveZuora
         new(attributes).tap(&:save!)
       end
 
-      def batch_create(*zobjects)
-        zobjects = zobjects.flatten.select do |zobject|
-          zobject.changed.present? && zobject.valid?
+      # Takes an array of zobjects and batch saves new and updated records separately
+      def save(*zobjects)
+        # Get all new objects
+        new_objects = zobjects.flatten.select do |zobject|
+          zobject.new_record? && zobject.changed.present? && zobject.valid?
         end
-        # Don't hit the API if none of our objects qualify.
-        return 0 if zobjects.empty?
-        results = connection.request(:create) do |soap|
-          soap.body do |xml|
-            zobjects.map do |zobject|
-              zobject.build_xml(xml, soap,
-                :namespace => soap.namespace,
-                :element_name => :zObjects,
-                :force_type => true,
-                :nil_strategy => :fields_to_nil)
-            end.last
-          end
-        end[:create_response][:result]
-        results = [results] unless results.is_a?(Array)
-        zobjects.each do |zobject|
-          result = results.find { |r| r[:id] == zobject.id } || 
-            { :errors => { :message => "No result returned." } }
-          if result[:success]
-            zobject.clear_changed_attributes
-          else
-            zobject.add_zuora_errors result[:errors]
-          end
-        end
-        # Return the count of updates that succeeded.
-        results.select{ |result| result[:success] }.size
-      end
 
-      def update(*zobjects)
-        zobjects = zobjects.flatten.select do |zobject|
+        # Get all updated objects
+        updated_objects = zobjects.flatten.select do |zobject|
           !zobject.new_record? && zobject.changed.present? && zobject.valid?
         end
-        # Don't hit the API if none of our objects qualify.
+
+        process_save(new_objects, :create)
+        process_save(updated_objects, :update)
+      end
+
+      # For backwards compatability
+      def update(*zobjects)
+        process_save(zobjects, :update)
+      end
+
+      def process_save(zobjects, action)
+        unless [:create, :update].include? action
+          raise "Invalid action type for saving. Must be create or update." 
+        end
+
         return 0 if zobjects.empty?
-        results = connection.request(:update) do |soap|
+        results = connection.request(action) do |soap|
           soap.body do |xml|
             zobjects.map do |zobject|
               zobject.build_xml(xml, soap,
@@ -124,7 +114,7 @@ module ActiveZuora
                 :nil_strategy => :fields_to_nil)
             end.last
           end
-        end[:update_response][:result]
+        end["#{action.to_s}_response".to_sym][:result]
         results = [results] unless results.is_a?(Array)
         zobjects.each do |zobject|
           result = results.find { |r| r[:id] == zobject.id } || 
