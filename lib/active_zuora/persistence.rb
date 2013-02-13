@@ -77,6 +77,37 @@ module ActiveZuora
         new(attributes).tap(&:save!)
       end
 
+      def batch_create(*zobjects)
+        zobjects = zobjects.flatten.select do |zobject|
+          zobject.changed.present? && zobject.valid?
+        end
+        # Don't hit the API if none of our objects qualify.
+        return 0 if zobjects.empty?
+        results = connection.request(:create) do |soap|
+          soap.body do |xml|
+            zobjects.map do |zobject|
+              zobject.build_xml(xml, soap,
+                :namespace => soap.namespace,
+                :element_name => :zObjects,
+                :force_type => true,
+                :nil_strategy => :fields_to_nil)
+            end.last
+          end
+        end[:create_response][:result]
+        results = [results] unless results.is_a?(Array)
+        zobjects.each do |zobject|
+          result = results.find { |r| r[:id] == zobject.id } || 
+            { :errors => { :message => "No result returned." } }
+          if result[:success]
+            zobject.clear_changed_attributes
+          else
+            zobject.add_zuora_errors result[:errors]
+          end
+        end
+        # Return the count of updates that succeeded.
+        results.select{ |result| result[:success] }.size
+      end
+
       def update(*zobjects)
         zobjects = zobjects.flatten.select do |zobject|
           !zobject.new_record? && zobject.changed.present? && zobject.valid?
