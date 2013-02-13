@@ -93,10 +93,13 @@ module ActiveZuora
 
         # Make calls in batches of 50
         new_objects.each_sice(50) do |batch|
+          puts "AAAA"
+          puts batch.length
           new_records += process_save(batch, :create)
         end
 
         updated_objects.each_sice(50) do |batch|
+          puts batch.length
           updated_records += process_save(batch, :update)
         end
 
