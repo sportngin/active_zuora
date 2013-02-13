@@ -89,8 +89,10 @@ module ActiveZuora
           !zobject.new_record? && zobject.changed.present? && zobject.valid?
         end
 
-        process_save(new_objects, :create)
-        process_save(updated_objects, :update)
+        new_records = process_save(new_objects, :create)
+        updated_records = process_save(updated_objects, :update)
+
+        new_records + updated_records
       end
 
       # For backwards compatability
