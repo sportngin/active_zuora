@@ -81,6 +81,9 @@ module ActiveZuora
 
       # Takes an array of zobjects and batch saves new and updated records separately
       def save(*zobjects)
+        new_records = 0
+        updated_records = 0
+
         # Get all new objects
         new_objects = zobjects.flatten.select do |zobject|
           zobject.new_record? && zobject.changed.present? && zobject.valid?
@@ -93,8 +96,6 @@ module ActiveZuora
 
         # Make calls in batches of 50
         new_objects.each_slice(50) do |batch|
-          puts "AAAA"
-          puts batch.length
           new_records += process_save(batch, :create)
         end
 
