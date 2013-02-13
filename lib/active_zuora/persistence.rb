@@ -3,6 +3,8 @@ module ActiveZuora
 
     extend ActiveSupport::Concern
 
+    MAX_BATCH_SIZE = 50
+
     def new_record?
       id.blank?
     end
@@ -89,15 +91,21 @@ module ActiveZuora
           !zobject.new_record? && zobject.changed.present? && zobject.valid?
         end
 
-        new_records = process_save(new_objects, :create)
-        updated_records = process_save(updated_objects, :update)
+        # Make calls in batches of 50
+        new_objects.each_sice(50) do |batch|
+          new_records += process_save(batch, :create)
+        end
+
+        updated_objects.each_sice(50) do |batch|
+          updated_records += process_save(batch, :update)
+        end
 
         new_records + updated_records
       end
 
       # For backwards compatability
       def update(*zobjects)
-        process_save(zobjects, :update)
+        save(zobjects)
       end
 
       def process_save(zobjects, action)
