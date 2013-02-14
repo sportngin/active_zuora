@@ -95,12 +95,11 @@ module ActiveZuora
         end
 
         # Make calls in batches of 50
-        new_objects.each_slice(50) do |batch|
+        new_objects.each_slice(MAX_BATCH_SIZE) do |batch|
           new_records += process_save(batch, :create)
         end
 
-        updated_objects.each_slice(50) do |batch|
-          puts batch.length
+        updated_objects.each_slice(MAX_BATCH_SIZE) do |batch|
           updated_records += process_save(batch, :update)
         end
 
@@ -144,6 +143,15 @@ module ActiveZuora
       end
 
       def delete(*ids)
+        ids.flatten!
+        deleted_records = 0
+        ids.each_slice(MAX_BATCH_SIZE) do |batch|
+          deleted_records += process_delete(batch)
+        end
+        deleted_records
+      end
+
+      def process_delete(*ids)
         ids.flatten!
         results = connection.request(:delete) do |soap|
           qualifier = soap.namespace_by_uri(soap.namespace)
