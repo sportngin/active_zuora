@@ -130,9 +130,10 @@ module ActiveZuora
         end["#{action.to_s}_response".to_sym][:result]
         results = [results] unless results.is_a?(Array)
         zobjects.each do |zobject|
+          puts "====="
           puts results
           puts "-----"
-          puts zobject
+          puts zobject.id
           result = results.find { |r| r[:id] == zobject.id } || 
             { :errors => { :message => "No result returned." } }
           if result[:success]
