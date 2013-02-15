@@ -127,13 +127,16 @@ module ActiveZuora
                 :nil_strategy => :fields_to_nil)
             end.last
           end
-        end["#{action.to_s}Response".to_sym][:result]
+        end["#{action.to_s}_response".to_sym][:result]
         results = [results] unless results.is_a?(Array)
         zobjects.each do |zobject|
           puts results
+          puts "-----"
+          puts zobject
           result = results.find { |r| r[:id] == zobject.id } || 
             { :errors => { :message => "No result returned." } }
           if result[:success]
+            puts result
             zobject.clear_changed_attributes
           else
             puts result
