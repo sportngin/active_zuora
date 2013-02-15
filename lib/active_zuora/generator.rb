@@ -143,6 +143,7 @@ module ActiveZuora
 
       customize 'Invoice' do
         include Generate
+        exclude_from_queries :regenerate_invoice_pdf
       end
 
       customize 'InvoiceItemAdjustment' do

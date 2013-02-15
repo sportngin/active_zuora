@@ -3,6 +3,8 @@ module ActiveZuora
 
     extend ActiveSupport::Concern
 
+    MAX_BATCH_SIZE = 50
+
     def new_record?
       id.blank?
     end
@@ -77,13 +79,45 @@ module ActiveZuora
         new(attributes).tap(&:save!)
       end
 
-      def update(*zobjects)
-        zobjects = zobjects.flatten.select do |zobject|
+      # Takes an array of zobjects and batch saves new and updated records separately
+      def save(*zobjects)
+        new_records = 0
+        updated_records = 0
+
+        # Get all new objects
+        new_objects = zobjects.flatten.select do |zobject|
+          zobject.new_record? && zobject.changed.present? && zobject.valid?
+        end
+
+        # Get all updated objects
+        updated_objects = zobjects.flatten.select do |zobject|
           !zobject.new_record? && zobject.changed.present? && zobject.valid?
         end
-        # Don't hit the API if none of our objects qualify.
+
+        # Make calls in batches of 50
+        new_objects.each_slice(MAX_BATCH_SIZE) do |batch|
+          new_records += process_save(batch, :create)
+        end
+
+        updated_objects.each_slice(MAX_BATCH_SIZE) do |batch|
+          updated_records += process_save(batch, :update)
+        end
+
+        new_records + updated_records
+      end
+
+      # For backwards compatability
+      def update(*zobjects)
+        save(zobjects)
+      end
+
+      def process_save(zobjects, action)
+        unless [:create, :update].include? action
+          raise "Invalid action type for saving. Must be create or update." 
+        end
+
         return 0 if zobjects.empty?
-        results = connection.request(:update) do |soap|
+        results = connection.request(action) do |soap|
           soap.body do |xml|
             zobjects.map do |zobject|
               zobject.build_xml(xml, soap,
@@ -93,11 +127,16 @@ module ActiveZuora
                 :nil_strategy => :fields_to_nil)
             end.last
           end
-        end[:update_response][:result]
+        end["#{action.to_s}_response".to_sym][:result]
         results = [results] unless results.is_a?(Array)
-        zobjects.each do |zobject|
-          result = results.find { |r| r[:id] == zobject.id } || 
-            { :errors => { :message => "No result returned." } }
+        zobjects.each_with_index do |zobject, i|
+          # If it's an update, grab by id, otherwise by index
+          if action == :update
+            result = results.find { |r| r[:id] == zobject.id } || 
+              { :errors => { :message => "No result returned." } }
+          else
+            result = results[i] || { :errors => { :message => "No result returned." } }
+          end
           if result[:success]
             zobject.clear_changed_attributes
           else
@@ -109,6 +148,15 @@ module ActiveZuora
       end
 
       def delete(*ids)
+        ids.flatten!
+        deleted_records = 0
+        ids.each_slice(MAX_BATCH_SIZE) do |batch|
+          deleted_records += process_delete(batch)
+        end
+        deleted_records
+      end
+
+      def process_delete(*ids)
         ids.flatten!
         results = connection.request(:delete) do |soap|
           qualifier = soap.namespace_by_uri(soap.namespace)
