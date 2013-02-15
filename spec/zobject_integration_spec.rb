@@ -82,6 +82,18 @@ describe "ZObject" do
       # Make sure that the has_many pre-loads the inverse relationship.
       @account.children.each { |child| child.parent_loaded?.should be_true }
 
+      # Testing batch creates
+      batch_accounts = []
+      batch_number = 55
+      (1..batch_number).each do |i|
+        batch_accounts << Z::Account.new(
+          :name => @account.name,
+          :currency => "USD",
+          :status => "Draft",
+          :bill_cycle_day => 1)
+      end
+      Z::Account.save(batch_accounts).should == batch_number
+
       # Delete all
       Z::Account.where(:name => @account.name).delete_all.should >= 1
       @account = nil
