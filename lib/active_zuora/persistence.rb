@@ -127,7 +127,7 @@ module ActiveZuora
                 :nil_strategy => :fields_to_nil)
             end.last
           end
-        end["#{action.to_s}_response".to_sym][:result]
+        end["#{action.to_s}Response".to_sym][:result]
         results = [results] unless results.is_a?(Array)
         zobjects.each do |zobject|
           puts results
