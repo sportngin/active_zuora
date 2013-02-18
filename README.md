@@ -4,6 +4,11 @@
 
 Use Zuora's API like ActiveRecord.  Auto-generate all the classes from the wsdl file, or easily declare your own.
 
+## Active Zuora Version 1
+This repostiory contains >= Version 2 of Active Zuora
+
+Version 1 can be found at http://github.com/tstmedia/active_zuora_v1
+
 ## Configuration
 
     ActiveZuora.configure(
