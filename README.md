@@ -1,13 +1,13 @@
 # active_zuora - Auto-Generated ActiveModel Interface for Zuora
 
-[![TravisCI](https://secure.travis-ci.org/tstmedia/active_zuora.png "TravisCI")](http://travis-ci.org/tstmedia/active_zuora "Travis-CI ActiveZuora") [![Code Climate](https://codeclimate.com/github/tstmedia/active_zuora.png)](https://codeclimate.com/github/tstmedia/active_zuora)
+[![TravisCI](https://secure.travis-ci.org/sportngin/active_zuora.png "TravisCI")](http://travis-ci.org/sportngin/active_zuora "Travis-CI ActiveZuora") [![Code Climate](https://codeclimate.com/github/sportngin/active_zuora.png)](https://codeclimate.com/github/sportngin/active_zuora)
 
 Use Zuora's API like ActiveRecord.  Auto-generate all the classes from the wsdl file, or easily declare your own.
 
 ## Active Zuora Version 1
 This repostiory contains >= Version 2 of Active Zuora
 
-Version 1 can be found at http://github.com/tstmedia/active_zuora_v1
+Version 1 can be found at https://github.com/sportngin/active_zuora_v1
 
 ## Configuration
 
@@ -48,7 +48,7 @@ Or, if you prefer, you can define your ZObjects or Complex Types manually.
 
       has_many :subscriptions, :order => :name
       has_many :active_subscriptions, :class_name => 'Subscription',
-        :conditions => { :status => 'Active' }, 
+        :conditions => { :status => 'Active' },
         :order => [ :name, :desc ]
       belongs_to :parent, :class_name => 'Account'
       has_many :children, :class_name => 'Account', :foreign_key => :parent_id, :inverse_of => :parent
@@ -85,7 +85,7 @@ Changes are also tracked.
     account.changes # []
 
 Errors are captured using ActiveModel::Validations, or from error messages received from the server.
-  
+
     account = ActiveZuora::Account.new
     account.save # false
     account.errors # { :base => ["Missing attribute: Name"] } # Returned from server.
@@ -126,7 +126,7 @@ By default, every Query object caches the results once you call an array-like me
       scope :since, lambda { |datetime| where(:created_date => { ">=" => datetime }) }
     end
 
-    ActiveZuora::Account.select(:id).draft.since(Date.new 2012).to_zql 
+    ActiveZuora::Account.select(:id).draft.since(Date.new 2012).to_zql
     # => "select Id from Account where Status = 'Draft' and CreatedDate >= '2012-01-01T00:00:00+08:00'"
 
 Like ActiveRecord, you can also chain any class method on the ZObject, since named scopes are nothing more than class methods that return a Relation object.
@@ -149,12 +149,12 @@ You can also delete all records matching a query as well.  The method returns th
 
 ## License
 
-Active Zuora is released under the MIT license: 
+Active Zuora is released under the MIT license:
 
 http://www.opensource.org/licenses/MIT
 
 ## Support
 
-Bug reports and feature requests can be filed as github issues here: 
+Bug reports and feature requests can be filed as github issues here:
 
-https://github.com/tstmedia/active_zuora/issues
+https://github.com/sportngin/active_zuora/issues
