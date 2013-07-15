@@ -1,7 +1,7 @@
 module ActiveZuora
   class Connection
 
-    attr_reader :soap_client
+    attr_reader :soap_client, :session_id
 
     WSDL = File.expand_path('../../../wsdl/zuora.wsdl', __FILE__)
 
