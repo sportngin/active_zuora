@@ -48,7 +48,6 @@ describe "Subscribe" do
       subscribe_request = Z::SubscribeRequest.new(
         :account => {
           :name => "Joe Customer",
-          :currency => "USD",
           :bill_cycle_day => 1,
           :payment_term => "Due Upon Receipt",
           :batch => "Batch1"
@@ -128,7 +127,6 @@ describe "Subscribe" do
       subscribe_request = Z::SubscribeRequest.new(
         :account => {
           :name => "Joe Customer",
-          :currency => "USD",
           :bill_cycle_day => 1,
           :payment_term => "Due Upon Receipt",
           :batch => "Batch1"

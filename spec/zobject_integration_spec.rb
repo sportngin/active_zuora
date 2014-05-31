@@ -20,7 +20,6 @@ describe "ZObject" do
       # Test creation.
       @account = Z::Account.new(
         :name => "ZObject Integration Test Account", 
-        :currency => "USD", 
         :status => "Draft", 
         :bill_cycle_day => 1)
       @account.changes.should be_present
@@ -74,7 +73,6 @@ describe "ZObject" do
       @child = Z::Account.create!(
         :parent_id => @account.id,
         :name => "ZObject Integration Test Child Account", 
-        :currency => "USD", 
         :status => "Draft", 
         :bill_cycle_day => 1)
       @child.parent.should == @account
@@ -88,7 +86,6 @@ describe "ZObject" do
       (1..batch_number).each do |i|
         batch_accounts << Z::Account.new(
           :name => @account.name,
-          :currency => "USD",
           :status => "Draft",
           :bill_cycle_day => 1)
       end

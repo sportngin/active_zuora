@@ -117,7 +117,7 @@ module ActiveZuora
 
       nesting = @class_nesting
 
-      customize 'Account' do
+      customize 'Account' do |defaults|
         belongs_to :bill_to, :class_name => nested_class_name('Contact') if field? :bill_to
         if field? :parent_id
           belongs_to :parent, :class_name => nested_class_name('Account')
@@ -127,6 +127,7 @@ module ActiveZuora
         validates :currency, :presence => true if field? :currency
         validates :name, :presence => true if field? :name
         validates :status, :presence => true if field? :status
+        default :currency, :to => defaults[:currency] if defaults.has_key?(:currency)
       end
 
       customize 'Amendment' do
