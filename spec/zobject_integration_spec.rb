@@ -38,7 +38,7 @@ describe "ZObject" do
       # Test querying.
       Z::Account.where(:name => "Some Random Name").should_not include(@account)
       Z::Account.where(:name => "Some Random Name").or(:name => @account.name).should include(@account)
-      Z::Account.where(:created_date => { ">=" => Date.today }).should include(@account)
+      Z::Account.where(:created_date => { ">=" => Date.yesterday }).should include(@account)
       Z::Account.where(:created_date => { ">" => Time.now }).or(:name => @account.name).should include(@account)
       Z::Account.where(:created_date => { ">=" => Date.today }).find_each do |account|
         account.should be_present
