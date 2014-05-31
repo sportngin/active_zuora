@@ -28,7 +28,7 @@ describe "Subscribe" do
           :product_rate_plan_charge_tier_data => {
             :product_rate_plan_charge_tier => {
               :active => true,
-              :currency => "USD",
+              :currency => Tenant.currency,
               :tier => 1,
               :price => 50.00,
               :starting_unit => 1,
@@ -48,7 +48,7 @@ describe "Subscribe" do
       subscribe_request = Z::SubscribeRequest.new(
         :account => {
           :name => "Joe Customer",
-          :currency => "USD",
+          :currency => Tenant.currency,
           :bill_cycle_day => 1,
           :payment_term => "Due Upon Receipt",
           :batch => "Batch1"
@@ -128,7 +128,7 @@ describe "Subscribe" do
       subscribe_request = Z::SubscribeRequest.new(
         :account => {
           :name => "Joe Customer",
-          :currency => "USD",
+          :currency => Tenant.currency,
           :bill_cycle_day => 1,
           :payment_term => "Due Upon Receipt",
           :batch => "Batch1"
