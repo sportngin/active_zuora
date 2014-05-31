@@ -8,6 +8,7 @@ module ActiveZuora
       @document = document
       @classes = []
       @class_nesting = options[:inside] || ActiveZuora
+      @defaults = options[:defaults] || {}
     end
 
     def generate_classes
@@ -198,7 +199,7 @@ module ActiveZuora
 
     def customize(zuora_class_name, &block)
       if @class_nesting.const_defined?(zuora_class_name)
-        @class_nesting.const_get(zuora_class_name).instance_eval(&block)
+        @class_nesting.const_get(zuora_class_name).instance_exec(@defaults, &block)
       end
     end
 

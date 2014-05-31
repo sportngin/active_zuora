@@ -9,7 +9,7 @@ ActiveZuora.configure(
 )
 
 module Z; end
-ActiveZuora.generate_classes :inside => Z
+ActiveZuora.generate_classes :inside => Z, defaults: { currency: ENV['ZUORA_CURRENCY'] || 'USD' }
 
 def integration_test
   # Block helper.  Integration tests should be wrapped in this block.
