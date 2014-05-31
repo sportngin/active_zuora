@@ -6,9 +6,9 @@ describe "HasManyRelations" do
 
     before :all do
       @account = Z::Account.create!(
-        :name => "ZObject Integration Test Account", 
+        :name => "ZObject Integration Test Account",
         :status => "Draft",
-        :currency => "USD", 
+        :currency => Tenant.currency,
         :bill_cycle_day => 1)
       @billy = Z::Contact.create!(
         :account => @account,

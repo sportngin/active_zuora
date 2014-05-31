@@ -10,7 +10,7 @@ describe "ZObject" do
       @child.delete if @child
     end
 
-    it "can can be created, queried, updated, and destroyed" do
+    it "can be created, queried, updated, and destroyed" do
 
       # Test failed creation.
       @account = Z::Account.create
@@ -19,9 +19,9 @@ describe "ZObject" do
 
       # Test creation.
       @account = Z::Account.new(
-        :name => "ZObject Integration Test Account", 
-        :currency => "USD", 
-        :status => "Draft", 
+        :name => "ZObject Integration Test Account",
+        :currency => Tenant.currency,
+        :status => "Draft",
         :bill_cycle_day => 1)
       @account.changes.should be_present
       @account.save.should be_true
@@ -38,7 +38,7 @@ describe "ZObject" do
       # Test querying.
       Z::Account.where(:name => "Some Random Name").should_not include(@account)
       Z::Account.where(:name => "Some Random Name").or(:name => @account.name).should include(@account)
-      Z::Account.where(:created_date => { ">=" => Date.today }).should include(@account)
+      Z::Account.where(:created_date => { ">=" => Date.yesterday }).should include(@account)
       Z::Account.where(:created_date => { ">" => Time.now }).or(:name => @account.name).should include(@account)
       Z::Account.where(:created_date => { ">=" => Date.today }).find_each do |account|
         account.should be_present
@@ -73,9 +73,9 @@ describe "ZObject" do
       # Associations
       @child = Z::Account.create!(
         :parent_id => @account.id,
-        :name => "ZObject Integration Test Child Account", 
-        :currency => "USD", 
-        :status => "Draft", 
+        :name => "ZObject Integration Test Child Account",
+        :currency => Tenant.currency,
+        :status => "Draft",
         :bill_cycle_day => 1)
       @child.parent.should == @account
       @account.children.should include(@child)
@@ -88,7 +88,7 @@ describe "ZObject" do
       (1..batch_number).each do |i|
         batch_accounts << Z::Account.new(
           :name => @account.name,
-          :currency => "USD",
+          :currency => Tenant.currency,
           :status => "Draft",
           :bill_cycle_day => 1)
       end

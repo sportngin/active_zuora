@@ -19,3 +19,9 @@ def integration_test
     $stderr.puts "Integration tests skipped because ZUORA_USER or ZUORA_PASS are not set."
   end
 end
+
+module Tenant
+  def self.currency
+    ENV['ZUORA_CURRENCY'] || 'USD'
+  end
+end
