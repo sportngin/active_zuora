@@ -8,6 +8,7 @@ module ActiveZuora
       @document = document
       @classes = []
       @class_nesting = options[:inside] || ActiveZuora
+      @defaults = options[:defaults] || {}
     end
 
     def generate_classes
@@ -116,7 +117,7 @@ module ActiveZuora
 
       nesting = @class_nesting
 
-      customize 'Account' do
+      customize 'Account' do |defaults|
         belongs_to :bill_to, :class_name => nested_class_name('Contact') if field? :bill_to
         if field? :parent_id
           belongs_to :parent, :class_name => nested_class_name('Account')
@@ -126,6 +127,7 @@ module ActiveZuora
         validates :currency, :presence => true if field? :currency
         validates :name, :presence => true if field? :name
         validates :status, :presence => true if field? :status
+        default :currency, :to => defaults[:currency] if defaults.has_key?(:currency)
       end
 
       customize 'Amendment' do
@@ -164,6 +166,10 @@ module ActiveZuora
         exclude_from_queries :product_rate_plan_charge_tier_data
       end
 
+      customize 'ProductRatePlanChargeTier' do |defaults|
+        default :currency, :to => defaults[:currency] if defaults.has_key?(:currency)
+      end
+
       customize 'Usage' do
         exclude_from_queries :ancestor_account_id, :invoice_id, :invoice_number
       end
@@ -198,7 +204,7 @@ module ActiveZuora
 
     def customize(zuora_class_name, &block)
       if @class_nesting.const_defined?(zuora_class_name)
-        @class_nesting.const_get(zuora_class_name).instance_eval(&block)
+        @class_nesting.const_get(zuora_class_name).instance_exec(@defaults, &block)
       end
     end
 

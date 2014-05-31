@@ -16,6 +16,7 @@ module ActiveZuora
       include Fields
       include ActiveModel::Validations
       include BelongsToAssociations
+      include Callbacks
       class << self
         attr_accessor :namespace
         attr_writer :zuora_object_name

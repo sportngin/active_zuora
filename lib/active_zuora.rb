@@ -16,6 +16,7 @@ require 'active_zuora/z_object'
 require 'active_zuora/subscribe'
 require 'active_zuora/amend'
 require 'active_zuora/generate'
+require 'active_zuora/callbacks'
 
 module ActiveZuora
 
