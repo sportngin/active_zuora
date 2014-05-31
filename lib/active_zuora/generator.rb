@@ -166,6 +166,10 @@ module ActiveZuora
         exclude_from_queries :product_rate_plan_charge_tier_data
       end
 
+      customize 'ProductRatePlanChargeTier' do |defaults|
+        default :currency, :to => defaults[:currency] if defaults.has_key?(:currency)
+      end
+
       customize 'Usage' do
         exclude_from_queries :ancestor_account_id, :invoice_id, :invoice_number
       end

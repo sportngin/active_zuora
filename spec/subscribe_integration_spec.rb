@@ -28,7 +28,6 @@ describe "Subscribe" do
           :product_rate_plan_charge_tier_data => {
             :product_rate_plan_charge_tier => {
               :active => true,
-              :currency => "USD",
               :tier => 1,
               :price => 50.00,
               :starting_unit => 1,
