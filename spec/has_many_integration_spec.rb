@@ -29,24 +29,24 @@ describe "HasManyRelations" do
       Z::Account.instance_eval do
         has_many :billies, :conditions => { :first_name => "Billy" }, :order => [:first_name, :desc], :class_name => 'Z::Contact'
       end
-      @account.billies.to_a == [@billy]
-      @account.billies.scope.order_attribute.should == :first_name
-      @account.billies.scope.order_direction.should == :desc
+			expect(@account.billies.to_a).to eq([@billy])
+      expect(@account.billies.scope.order_attribute).to eq(:first_name)
+      expect(@account.billies.scope.order_direction).to eq(:desc)
     end
 
     it "can behave like an array" do
-      @account.contacts.size.should == 2
-      @account.contacts.map(&:first_name).should =~ %w{Billy Franky}
+      expect(@account.contacts.size).to eq(2)
+      expect(@account.contacts.map(&:first_name)).to match_array(%w{Billy Franky})
     end
 
     it "can respond to functions on the Relation" do
       @account.contacts.unload
-      @account.contacts.loaded?.should be_false
+      expect(@account.contacts.loaded?).to be_falsey
       @account.contacts.reload
-      @account.contacts.loaded?.should be_true
-      @account.contacts.where(:last_name => "Funhouse").to_a.should == [@franky]
-      @account.contacts.loaded?.should be_true
-      @account.contacts.to_a.should =~ [@billy, @franky]
+      expect(@account.contacts.loaded?).to be_truthy
+      expect(@account.contacts.where(:last_name => "Funhouse").to_a).to eq([@franky])
+      expect(@account.contacts.loaded?).to be_truthy
+      expect(@account.contacts.to_a).to match_array([@billy, @franky])
     end
 
   end
