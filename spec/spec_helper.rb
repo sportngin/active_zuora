@@ -2,6 +2,8 @@ require 'rubygems'
 require 'rspec'
 require 'active_zuora'
 
+I18n.enforce_available_locales = true
+
 ActiveZuora.configure(
   :log => ENV['DEBUG'],
   :username => ENV['ZUORA_USER'],

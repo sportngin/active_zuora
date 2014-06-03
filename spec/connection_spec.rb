@@ -8,30 +8,30 @@ describe ActiveZuora::Connection do
     end
 
     it "passes the regular header if not set" do
-      Savon::SOAP::Request.stub(:new) do |config, http, soap|
+      allow(Savon::SOAP::Request).to receive(:new) do |config, http, soap|
         @stub_was_called = true
-        soap.header.should == {"SessionHeader" => {"session" => nil}}
+        expect(soap.header).to eq( { "SessionHeader" => {"session" => nil} } )
 
         double('response').as_null_object
       end
 
       @connection.request(:amend) {}
 
-      @stub_was_called.should eq true
+      expect(@stub_was_called).to be_truthy
     end
 
     it "merges in a custom header if set" do
       @connection.custom_header = {'CallOptions' => {'useSingleTransaction' => true}}
-      Savon::SOAP::Request.stub(:new) do |config, http, soap|
+      allow(Savon::SOAP::Request).to receive(:new) do |config, http, soap|
         @stub_was_called = true
-        soap.header.should == {"SessionHeader" => {"session" => nil}, 'CallOptions' => {'useSingleTransaction' => true}}
+        expect(soap.header).to eq( { "SessionHeader" => {"session" => nil}, 'CallOptions' => {'useSingleTransaction' => true} } )
 
         double('response').as_null_object
       end
 
       @connection.request(:amend) {}
 
-      @stub_was_called.should eq true
+      expect(@stub_was_called).to be_truthy
     end
   end
 end

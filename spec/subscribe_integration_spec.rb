@@ -90,13 +90,13 @@ describe "Subscribe" do
 
       subscribe_request.subscribe!
       @account = subscribe_request.account
-      subscribe_request.account.new_record?.should be_false
-      subscribe_request.account.changed?.should be_false
-      subscribe_request.subscription_data.subscription.new_record?.should be_false
-      subscribe_request.subscription_data.subscription.rate_plans.first.
+      expect(subscribe_request.account.new_record?).to be_falsey
+      expect(subscribe_request.account.changed?).to be_falsey
+      expect(subscribe_request.subscription_data.subscription.new_record?).to be_falsey
+      expect(subscribe_request.subscription_data.subscription.rate_plans.first.
         rate_plan_charges.first.
-        product_rate_plan_charge.should == @product_rate_plan_charge
-      subscribe_request.result.should be_present
+        product_rate_plan_charge).to eq(@product_rate_plan_charge)
+      expect(subscribe_request.result).to be_present
 
       # Now amend the subscription
       subscription = subscribe_request.subscription_data.subscription.reload
@@ -119,8 +119,8 @@ describe "Subscribe" do
         }
       )
       amend_request.amend!
-      amend_request.amendments.first.new_record?.should be_false
-      amend_request.result.should be_present
+      expect(amend_request.amendments.first.new_record?).to be_falsey
+      expect(amend_request.result).to be_present
     end
 
     it "Can successfully subscribe and generate an invoice" do
@@ -171,13 +171,13 @@ describe "Subscribe" do
 
       subscribe_request.subscribe!
       @account = subscribe_request.account
-      subscribe_request.account.new_record?.should be_false
-      subscribe_request.account.changed?.should be_false
-      subscribe_request.subscription_data.subscription.new_record?.should be_false
-      subscribe_request.subscription_data.subscription.rate_plans.first.
+      expect(subscribe_request.account.new_record?).to be_falsey
+      expect(subscribe_request.account.changed?).to be_falsey
+      expect(subscribe_request.subscription_data.subscription.new_record?).to be_falsey
+      expect(subscribe_request.subscription_data.subscription.rate_plans.first.
         rate_plan_charges.first.
-        product_rate_plan_charge.should == @product_rate_plan_charge
-      subscribe_request.result.should be_present
+        product_rate_plan_charge).to eq(@product_rate_plan_charge)
+      expect(subscribe_request.result).to be_present
 
       # Now renew the subscription
       subscription = subscribe_request.subscription_data.subscription.reload
@@ -198,8 +198,8 @@ describe "Subscribe" do
         }
       )
       amend_request.amend!
-      amend_request.amendments.first.new_record?.should be_false
-      amend_request.result.should be_present
+      expect(amend_request.amendments.first.new_record?).to be_falsey
+      expect(amend_request.result).to be_present
 
       invoice = Z::Invoice.new(
           account_id: subscribe_request.account.id,
@@ -210,8 +210,8 @@ describe "Subscribe" do
           includes_usage: false
       )
       invoice.generate!
-      invoice.id.should be_present
-      invoice.account_id.should == subscribe_request.account.id
+      expect(invoice.id).to be_present
+      expect(invoice.account_id).to eq(subscribe_request.account.id)
     end
 
   end
