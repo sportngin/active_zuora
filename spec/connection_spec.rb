@@ -8,7 +8,7 @@ describe ActiveZuora::Connection do
     end
 
     it "passes the regular header if not set" do
-      allow(Savon::SOAP::Request).to receive(:new) do |config, http, soap|
+      allow(SavonZuora::SOAP::Request).to receive(:new) do |config, http, soap|
         @stub_was_called = true
         expect(soap.header).to eq( { "SessionHeader" => {"session" => nil} } )
 
@@ -22,7 +22,7 @@ describe ActiveZuora::Connection do
 
     it "merges in a custom header if set" do
       @connection.custom_header = {'CallOptions' => {'useSingleTransaction' => true}}
-      allow(Savon::SOAP::Request).to receive(:new) do |config, http, soap|
+      allow(SavonZuora::SOAP::Request).to receive(:new) do |config, http, soap|
         @stub_was_called = true
         expect(soap.header).to eq( { "SessionHeader" => {"session" => nil}, 'CallOptions' => {'useSingleTransaction' => true} } )
 

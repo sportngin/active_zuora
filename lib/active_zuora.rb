@@ -1,4 +1,4 @@
-require 'savon'
+require 'savon_zuora'
 require 'active_model'
 require 'active_support/all'
 
@@ -22,7 +22,7 @@ module ActiveZuora
   # Setup configuration.  None of this sends a request.
   def self.configure(configuration)
     # Set some sensible defaults with the savon SOAP client.
-    Savon.configure do |config|
+    SavonZuora.configure do |config|
       config.log = HTTPI.log = configuration[:log] || false
       config.log_level = configuration[:log_level] || :info
       config.raise_errors = true

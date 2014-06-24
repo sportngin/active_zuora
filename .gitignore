@@ -3,3 +3,6 @@ log/*.log
 pkg/
 *.gem
 Gemfile.lock
+.idea
+.ruby-version
+
