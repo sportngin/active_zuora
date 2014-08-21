@@ -33,7 +33,7 @@ You can auto-generate all your Zuora classes from the wsdl file.  It will genera
 
 By default, it will generate the classes inside the ActiveZuora module.  But you can specify a different nesting if you'd like.
 
-    ActiveZuora.generate_classes :under => SomeOtherModule
+    ActiveZuora.generate_classes :inside => SomeOtherModule
 
 Or, if you prefer, you can define your ZObjects or Complex Types manually.
 
