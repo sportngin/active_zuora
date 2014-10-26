@@ -36,10 +36,10 @@ describe "ZObject" do
       expect(@account.changes).to be_blank
 
       # Test querying.
-      expect(Z::Account.where(:name => "Some Random Name")).to_not include(@account)
-      expect(Z::Account.where(:name => "Some Random Name").or(:name => @account.name)).to include(@account)
-      expect(Z::Account.where(:created_date => { ">=" => Date.yesterday })).to include(@account)
-      expect(Z::Account.where(:created_date => { ">" => Time.now }).or(:name => @account.name)).to include(@account)
+      expect(Z::Account.where(:name => "Some Random Name").all).to_not include(@account)
+      expect(Z::Account.where(:name => "Some Random Name").or(:name => @account.name).all).to include(@account)
+      expect(Z::Account.where(:created_date => { ">=" => Date.yesterday }).all).to include(@account)
+      expect(Z::Account.where(:created_date => { ">" => Time.now }).or(:name => @account.name).all).to include(@account)
       Z::Account.where(:created_date => { ">=" => Date.today }).find_each do |account|
         expect(account).to be_present
       end
