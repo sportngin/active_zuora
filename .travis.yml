@@ -1,0 +1,8 @@
+rvm:
+- 1.9.3
+- 2.0.0
+- 2.1.2
+env:
+  global:
+  - secure: ZFQj4fzF4wTAd0PTVT7scZZC8z572SsHC1364PqxO5aAgeR2GODUkMcqIpiQ1mFr14c2NZbtT6krJIexww+/o/XSyiPKuoxZj9BB1bZ0+ei4JV2MSi5sD3Dhnx7k8Tp3Rxvuis2h7VUSILGdSo47KImWAFDtdVwO7s2LAMTfTsk=
+  - secure: NCKEWiLo7lemfhP1ivwXPr07p1cuSnquH9IJTA7EpyayhBgLrjwhgYOJ/v/pCHfthji2Qylv34MbqzNxcfYW/xaBnM9ytsNwdrHDlnLv+cDuSjRYla4eXplbVeEcsfrdadbbf6LuNRtV3nwvtKEESc0VcCyvY6AmdKlfpbYwDbs=

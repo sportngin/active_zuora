@@ -36,10 +36,10 @@ describe "ZObject" do
       expect(@account.changes).to be_blank
 
       # Test querying.
-      expect(Z::Account.where(:name => "Some Random Name").all).to_not include(@account)
-      expect(Z::Account.where(:name => "Some Random Name").or(:name => @account.name).all).to include(@account)
-      expect(Z::Account.where(:created_date => { ">=" => Date.yesterday }).all).to include(@account)
-      expect(Z::Account.where(:created_date => { ">" => Time.now }).or(:name => @account.name).all).to include(@account)
+      expect(Z::Account.where(:name => "Some Random Name").all.to_a).to_not include(@account)
+      expect(Z::Account.where(:name => "Some Random Name").or(:name => @account.name).all.to_a).to include(@account)
+      expect(Z::Account.where(:created_date => { ">=" => Date.yesterday }).all.to_a).to include(@account)
+      expect(Z::Account.where(:created_date => { ">" => Time.now }).or(:name => @account.name).all.to_a).to include(@account)
       Z::Account.where(:created_date => { ">=" => Date.today }).find_each do |account|
         expect(account).to be_present
       end
@@ -77,7 +77,7 @@ describe "ZObject" do
         :currency => Tenant.currency,
         :status => "Draft",
         :bill_cycle_day => 1)
-      expect(@account.children).to include(@child)
+      expect(@account.children.to_a).to include(@child)
       expect(@child.parent).to eq(@account)
       # Make sure that the has_many pre-loads the inverse relationship.
       @account.children.each { |child| expect(child.parent_loaded?).to be_truthy }
