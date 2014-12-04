@@ -1,0 +1,13 @@
+defaults:
+  deploy_cmd: gem push *.gem
+  before_deploy_cmds:
+    - op tag-release
+    - sed -i '' -e "s/\".*/\"$(git tag | tail -1 | sed s/v//)\"/" lib/active_zuora/version.rb
+    - git add  lib/active_zuora/version.rb
+    - git commit -m "Version Bump" && git push
+    - gem build active_zuora.gemspec
+  after_deploy_cmds:
+    - rm *.gem
+environments:
+  -
+    rubygems: {}

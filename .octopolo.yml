@@ -1,0 +1,4 @@
+github_repo: sportngin/active_zuora
+semantic_versioning: true
+branches_to_keep:
+- master
