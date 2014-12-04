@@ -25,6 +25,7 @@ module ActiveZuora
     Savon.configure do |config|
       config.log = HTTPI.log = configuration[:log] || false
       config.log_level = configuration[:log_level] || :info
+      config.logger = configuration[:logger] if configuration[:logger]
       config.raise_errors = true
     end
     # Create a default connection on Base
