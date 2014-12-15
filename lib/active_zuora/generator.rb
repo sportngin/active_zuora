@@ -157,8 +157,8 @@ module ActiveZuora
 
       customize 'PaymentMethod' do
         exclude_from_queries :ach_account_number, :bank_transfer_account_number,
-        :credit_card_number, :credit_card_security_code, :gateway_option_data,
-        :second_token_id, :skip_validation, :token_id
+          :credit_card_number, :credit_card_security_code, :gateway_option_data,
+          :second_token_id, :skip_validation, :token_id
       end
 
       customize 'ProductRatePlanCharge' do
