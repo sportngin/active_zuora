@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.license          = "MIT"
   s.extra_rdoc_files = [ "README.md" ]
 
-  s.add_runtime_dependency('savon', ["~> 0.9.9"])
+  s.add_runtime_dependency('savon', ["~> 1.2.0"])
   s.add_runtime_dependency('activesupport', [">= 3.0.0", "< 5.0.0"])
   s.add_runtime_dependency('activemodel', [">= 3.0.0", "< 5.0.0"])
 
