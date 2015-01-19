@@ -14,19 +14,25 @@ Version 1 can be found at https://github.com/sportngin/active_zuora_v1
 
 ## Configuration
 
+```ruby
     ActiveZuora.configure(
       :username => 'user@example.com',
       :password => 'password'
     )
+```
 
-Enable SOAP logging to stderr or provide your own wsdl file.
+Enable SOAP logging to stderr, provide your own wsdl file or add custom
+fields to a list of filtered fields.
 
+```ruby
     ActiveZuora.configure(
       :username => 'user@example.com',
       :password => 'password',
       :log => true,
+      :log_filters => [:password, :SessionHeader, :mySecretCustomField1, :mySecretCustomField1], # Defaults to [:password, :SessionHeader]
       :wsdl => 'path/to/zuora.wsdl'
     )
+```
 
 ## Defining Classes
 

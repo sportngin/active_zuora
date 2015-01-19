@@ -5,7 +5,8 @@ require 'active_zuora'
 I18n.enforce_available_locales = true
 
 ActiveZuora.configure(
-  :log => ENV['DEBUG'],
+  :log => !!ENV['DEBUG'],
+  :pretty_print_xml => !!ENV['DEBUG'],
   :username => ENV['ZUORA_USER'],
   :password => ENV['ZUORA_PASS']
 )
