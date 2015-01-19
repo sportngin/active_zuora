@@ -1,3 +1,4 @@
+#### v2.1.2
 #### v2.1.1
 #### v2.1.0
 * Upgrade Savon to 1.2 https://github.com/sportngin/active_zuora/pull/22
