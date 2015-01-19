@@ -22,6 +22,10 @@ def integration_test
   end
 end
 
+def now(_message)
+  yield
+end
+
 module Tenant
   def self.currency
     ENV['ZUORA_CURRENCY'] || 'USD'
