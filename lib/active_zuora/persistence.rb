@@ -117,6 +117,7 @@ module ActiveZuora
         end
 
         return 0 if zobjects.empty?
+
         results = connection.request(action) do |soap|
           soap.body do |xml|
             zobjects.map do |zobject|
@@ -128,21 +129,16 @@ module ActiveZuora
             end.last
           end
         end["#{action.to_s}_response".to_sym][:result]
+
         results = [results] unless results.is_a?(Array)
-        zobjects.each_with_index do |zobject, i|
-          # If it's an update, grab by id, otherwise by index
-          if action == :update
-            result = results.find { |r| r[:id] == zobject.id } || 
-              { :errors => { :message => "No result returned." } }
-          else
-            result = results[i] || { :errors => { :message => "No result returned." } }
-          end
+        zobjects.zip(results).each do |zobject, result|
           if result[:success]
             zobject.clear_changed_attributes
           else
             zobject.add_zuora_errors result[:errors]
           end
         end
+
         # Return the count of updates that succeeded.
         results.select{ |result| result[:success] }.size
       end
