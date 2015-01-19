@@ -10,7 +10,17 @@ This repostiory contains >= Version 2 of Active Zuora
 Version 1 can be found at https://github.com/sportngin/active_zuora_v1
 
 ## Thread Safety
-2.0.X versions of Active Zuora are not thread safe. They depend on a version of [Savon](https://github.com/savonrb/savon) that is [does not work with threads](https://github.com/savonrb/savon/issues/259).
+
+2.2.X versions of Active Zuora should be thread safe. They depend on a newer version of [Savon](https://github.com/savonrb/savon) that does work with threads, unlike the 2.0.X version, which [does not work with threads](https://github.com/savonrb/savon/issues/259).
+* Please note that this has not yet been fully tested!
+
+## Zuora WSDL Version
+
+Several changes were made with WSDL version 46, which depreciated some items and changed some queries and logic. Version 2.2.X attempts to do an initial pass to make it valid for WSDL 46, but will break earlier versions. A second pass will be required to gracefully handle different WSDL versioning and how they are handled.
+
+Known changes:
+* ProductRatePlanChargeTier.Active: This has been depreciated and commented out of the rspec tests.
+* ProductRatePlan.ActiveCurrencies: This can no longer be queried with anything other than just the Id. Currently Relation.select_statement has been modified to exclude ActiveCurrencies from the query string. Further work will be needed to cleanly handle both earlier versions of the WSDL as well as querying for the ActiveCurrencies for thr ProductRatePlan.
 
 ## Configuration
 

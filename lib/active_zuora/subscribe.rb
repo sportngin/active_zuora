@@ -16,8 +16,8 @@ module ActiveZuora
 
     def subscribe
       self.result = self.class.connection.request(:subscribe) do |soap|
-        soap.body do |xml| 
-          build_xml(xml, soap, 
+        soap.body do |xml|
+          build_xml(xml, soap,
             :namespace => soap.namespace,
             :element_name => :subscribes,
             :force_type => true)

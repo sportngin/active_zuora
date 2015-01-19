@@ -7,7 +7,8 @@ I18n.enforce_available_locales = true
 ActiveZuora.configure(
   :log => ENV['DEBUG'],
   :username => ENV['ZUORA_USER'],
-  :password => ENV['ZUORA_PASS']
+  :password => ENV['ZUORA_PASS'],
+  :wsdl => 'wsdl/zuora.64.wsdl'
 )
 
 module Z; end

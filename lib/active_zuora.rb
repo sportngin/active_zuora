@@ -28,6 +28,8 @@ module ActiveZuora
       config.logger = configuration[:logger] if configuration[:logger]
       config.raise_errors = true
     end
+    # Savon.client(open_timeout: 300, read_timeout: 300)
+
     # Create a default connection on Base
     Base.connection = Connection.new(configuration)
   end

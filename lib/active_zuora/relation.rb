@@ -112,6 +112,7 @@ module ActiveZuora
     def query(&block)
       # Keep querying until all pages are retrieved.
       # Throws an exception for an invalid query.
+
       response = zobject_class.connection.request(:query){ |soap| soap.body = { :query_string => to_zql } }
       query_response = response[:query_response]
       records = objectify_query_results(query_response[:result][:records])
@@ -171,7 +172,9 @@ module ActiveZuora
     #
 
     def select_statement
-      "select " + selected_field_names.map { |field_name| zuora_field_name(field_name) }.join(', ')
+      # TODO: Handle ProductRatePlan.ActiveCurrencies more elegantly from WSDL 46 on up.
+      # "select " + selected_field_names.map { |field_name| zuora_field_name(field_name) }.join(', ')
+      "select " + selected_field_names.reject{ |field_name | zuora_field_name(field_name) == "ActiveCurrencies" }.map { |field_name| zuora_field_name(field_name) }.compact.join(', ')
     end
 
     def where_statement

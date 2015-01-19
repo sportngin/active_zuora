@@ -9,6 +9,8 @@ describe "Subscribe" do
       @product = Z::Product.where(:name => "Awesome Product").first ||
         Z::Product.create!(
           :name => "Awesome Product",
+          :features__c => "Now with even more awesome features!",
+          :benefits__c => "Now with even more awesome benefits!",
           :effective_start_date => Date.today,
           :effective_end_date => Date.today + 10.years
         )
@@ -27,7 +29,7 @@ describe "Subscribe" do
           :trigger_event => "ContractEffective",
           :product_rate_plan_charge_tier_data => {
             :product_rate_plan_charge_tier => {
-              :active => true,
+              # :active => true, ### Depreciated as of WSDL 46
               :currency => Tenant.currency,
               :tier => 1,
               :price => 50.00,
@@ -138,7 +140,7 @@ describe "Subscribe" do
           :credit_card_holder_name => "Robert Paulson",
           :credit_card_type => "MasterCard",
           :credit_card_number => "4111111111111111",
-          :credit_card_expiration_month => 1,
+          :credit_card_expiration_month => (sprintf '%02d', Date.today.month),
           :credit_card_expiration_year => (Date.today.year + 1)
         },
         :bill_to_contact => {
@@ -149,8 +151,8 @@ describe "Subscribe" do
         },
         :subscription_data => {
           :subscription => {
-            :contract_effective_date => Date.today,
-            :service_activation_date => Date.today,
+            :contract_effective_date => DateTime.now,
+            :service_activation_date => DateTime.now,
             :initial_term => 12,
             :renewal_term => 12,
             :term_type => 'TERMED'
