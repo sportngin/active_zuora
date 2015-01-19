@@ -29,7 +29,7 @@ fields to a list of filtered fields.
       :username => 'user@example.com',
       :password => 'password',
       :log => true,
-      :log_filters => [:password, :SessionHeader, :mySecretCustomField1, :mySecretCustomField1] # Defaults to [:password, :SessionHeader],
+      :log_filters => [:password, :SessionHeader, :mySecretCustomField1, :mySecretCustomField1], # Defaults to [:password, :SessionHeader]
       :wsdl => 'path/to/zuora.wsdl'
     )
 ```
