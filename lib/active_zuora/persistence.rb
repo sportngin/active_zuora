@@ -125,7 +125,7 @@ module ActiveZuora
                 :namespace => soap.namespace,
                 :element_name => :zObjects,
                 :force_type => true,
-                :nil_strategy => :fields_to_nil)
+                :nil_strategy => :fields_to_null)
             end.last
           end
         end["#{action.to_s}_response".to_sym][:result]
