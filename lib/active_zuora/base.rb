@@ -38,8 +38,19 @@ module ActiveZuora
       element_name = custom_element_name || zuora_object_name
       attributes = options.delete(:force_type) ? 
         { "xsi:type" => "#{qualifier}:#{zuora_object_name}" } : {}
+
+      fields_order = lambda do |a, b|
+        if send(a.name) == nil
+          send(b.name) == nil ? 0 : -1
+        elsif a.name.to_sym == :id
+          send(b.name) == nil ? 1 : -1
+        else
+          (b.name.to_sym == :id || send(b.name) == nil) ? 1 : 0
+        end
+      end
+
       xml.tag!(qualifier, element_name.to_sym, attributes) do
-        xml_field_names.map { |field_name| get_field!(field_name) }.each do |field|
+        xml_field_names.map { |field_name| get_field!(field_name) }.sort(&fields_order).each do |field|
           field.build_xml(xml, soap, send(field.name), options)
         end
       end
