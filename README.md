@@ -33,6 +33,11 @@ fields to a list of filtered fields.
       :wsdl => 'path/to/zuora.wsdl'
     )
 ```
+Override the default endpoint or host loaded from the wsdl
+
+```
+ActiveZuora::Base.connection.soap_client.wsdl.endpoint.host = "www.zuora.com" if Rails.env.production?
+````
 
 ## Defining Classes
 
