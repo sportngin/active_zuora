@@ -8,6 +8,7 @@ module ActiveZuora
       @document = document
       @classes = []
       @class_nesting = options[:inside] || ActiveZuora
+      @class_nesting.const_set("CollectionProxy", CollectionProxy) unless @class_nesting.constants.include?(:CollectionProxy)
     end
 
     def generate_classes

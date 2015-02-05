@@ -161,6 +161,14 @@ You can also delete all records matching a query as well.  The method returns th
 
     ActiveZuora::Account.where(:status => "Draft").delete_all # 56
 
+## Batch Subscribe
+
+You can submit up to 50 subscribe requests on a single subscribe call per the Zuora documentation.  To batch subscribe requests, use the CollectionProxy to build a collection of subscribe requests, then call batch_subscribe
+
+    ActiveZuora::CollectionProxy.new([ActiveZuora::SubscribeRequest.new({account: {}, bill_to: {}, subscription_data:{}}), 
+                                      ActiveZuora::SubscribeRequest.new({account: {}, bill_to: {}, subscription_data:{}})]).batch_subscribe
+
+
 ## License
 
 Active Zuora is released under the MIT license:
