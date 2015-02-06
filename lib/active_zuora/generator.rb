@@ -143,7 +143,10 @@ module ActiveZuora
 
       customize 'Invoice' do
         include Generate
-        exclude_from_queries :regenerate_invoice_pdf
+        # The body field can only be accessed for a single invoice at a time, so
+        # exclude it here to not break collections of invoices. The contents of
+        # the body field can be accessed instead through the pdf method.
+        exclude_from_queries :regenerate_invoice_pdf, :body
       end
 
       customize 'InvoiceItemAdjustment' do
