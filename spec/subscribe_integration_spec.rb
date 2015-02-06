@@ -41,6 +41,7 @@ describe "Subscribe" do
     after do
       @product.delete
       @account.delete
+      @account_2.delete if !!@account_2
     end
 
     it "Can successfully subscribe and amend using a new account" do
@@ -317,6 +318,7 @@ describe "Subscribe" do
       expect(subscribe_request_1.result).to be_present
       
       #subscribe reqeust 2
+      @account_2 = subscribe_request_2.account
       expect(subscribe_request_2.new_record?).to be_falsey
       expect(subscribe_request_2changed?).to be_falsey
       expect(subscribe_request_2.subscription_data.subscription.new_record?).to be_falsey
