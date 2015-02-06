@@ -39,5 +39,19 @@ module ActiveZuora
       raise "Could not generate: #{errors.full_messages.join ', '}" unless generate
     end
 
+    # Access the pdf representation of the invoice that is usually stored in the body field.
+    def pdf
+      return '' if new_record?
+      @pdf ||= fetch_pdf
+    end
+
+    protected
+
+    def fetch_pdf
+      response = self.class.connection.request(:query) do |soap|
+        soap.body = { :query_string => "select Body from #{self.class.zuora_object_name} where Id = '#{id}'" }
+      end
+      response[:query_response][:result][:records][:body]
+    end
   end
 end
