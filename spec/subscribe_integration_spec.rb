@@ -213,6 +213,7 @@ describe "Subscribe" do
       invoice.generate!
       expect(invoice.id).to be_present
       expect(invoice.account_id).to eq(subscribe_request.account.id)
+      expect(invoice.body).to be_present
     end
 
     it "Can successfully batch subscribe from a collection proxy of subscribe requests and generate an invoice for the first subscription" do

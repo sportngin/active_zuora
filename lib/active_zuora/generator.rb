@@ -144,7 +144,12 @@ module ActiveZuora
 
       customize 'Invoice' do
         include Generate
-        exclude_from_queries :regenerate_invoice_pdf
+        include LazyAttr
+        # The body field can only be accessed for a single invoice at a time, so
+        # exclude it here to not break collections of invoices. The contents of
+        # the body field will be lazy loaded in when needed.
+        exclude_from_queries :regenerate_invoice_pdf, :body
+        lazy_load :body
       end
 
       customize 'InvoiceItemAdjustment' do
