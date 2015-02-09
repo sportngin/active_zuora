@@ -18,6 +18,7 @@ require 'active_zuora/amend'
 require 'active_zuora/generate'
 require 'active_zuora/batch_subscribe'
 require 'active_zuora/collection_proxy'
+require 'active_zuora/lazy_attr'
 
 module ActiveZuora
 

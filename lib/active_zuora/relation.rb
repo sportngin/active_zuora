@@ -57,7 +57,7 @@ module ActiveZuora
       if relation.is_a?(Hash)
         where(relation)
       else
-        dup.tap do |dup| 
+        dup.tap do |dup|
           dup.filters.concat relation.filters
           dup.filters.uniq!
           dup.order_attribute = relation.order_attribute
@@ -155,7 +155,7 @@ module ActiveZuora
     protected
 
     def method_missing(method, *args, &block)
-      # This is how the chaing can happen on class methods or named scopes on the 
+      # This is how the chaing can happen on class methods or named scopes on the
       # ZObject class.
       if Array.method_defined?(method)
         to_a.send(method, *args, &block)
@@ -219,11 +219,11 @@ module ActiveZuora
       # Sometimes Zuora will return only a single record, not in an array.
       results = [results] unless results.is_a?(Array)
       results.map do |attributes|
-        # Strip any noisy attributes from the results that have to do with 
+        # Strip any noisy attributes from the results that have to do with
         # SOAP namespaces.
         attributes.delete_if { |key, value| key.to_s.start_with? "@" }
         # Instantiate the zobject class, but don't track the changes.
-        zobject_class.new(attributes).tap { |record| record.clear_changed_attributes }
+        zobject_class.new(attributes).tap { |record| record.changed_attributes.clear }
       end
     end
 
@@ -248,6 +248,6 @@ end
 
 
 
-    
+
 
 

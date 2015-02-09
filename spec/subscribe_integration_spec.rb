@@ -213,6 +213,7 @@ describe "Subscribe" do
       invoice.generate!
       expect(invoice.id).to be_present
       expect(invoice.account_id).to eq(subscribe_request.account.id)
+      expect(invoice.body).to be_present
     end
 
     it "Can successfully batch subscribe from a collection proxy of subscribe requests and generate an invoice for the first subscription" do
@@ -259,7 +260,7 @@ describe "Subscribe" do
           }
         }
       )
-      
+
       subscribe_request_2 = Z::SubscribeRequest.new(
         :account => {
           :name => "Joe Customer",
@@ -303,24 +304,20 @@ describe "Subscribe" do
           }
         }
       )
-      
+
       collection = Z::CollectionProxy.new([subscribe_request_1,subscribe_request_2])
       collection.batch_subscribe!
-      
+
       #subscribe reqeust 1
       @account = subscribe_request_1.account
-      expect(subscribe_request_1.new_record?).to be_falsey
-      expect(subscribe_request_1changed?).to be_falsey
       expect(subscribe_request_1.subscription_data.subscription.new_record?).to be_falsey
       expect(subscribe_request_1.subscription_data.subscription.rate_plans.first.
         rate_plan_charges.first.
         product_rate_plan_charge).to eq(@product_rate_plan_charge)
       expect(subscribe_request_1.result).to be_present
-      
+
       #subscribe reqeust 2
       @account_2 = subscribe_request_2.account
-      expect(subscribe_request_2.new_record?).to be_falsey
-      expect(subscribe_request_2changed?).to be_falsey
       expect(subscribe_request_2.subscription_data.subscription.new_record?).to be_falsey
       expect(subscribe_request_2.subscription_data.subscription.rate_plans.first.
         rate_plan_charges.first.
