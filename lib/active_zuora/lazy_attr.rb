@@ -32,7 +32,7 @@ module ActiveZuora
       def define_lazy_feild(field)
         instance_eval do
           define_method field do
-            instance_variable_get("@#{field}") || instance_variable_set(field, fetch_field("@#{field}"))
+            instance_variable_get("@#{field}") || instance_variable_set("@#{field}", fetch_field(field))
           end
         end
       end
