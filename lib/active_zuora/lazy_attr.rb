@@ -25,11 +25,11 @@ module ActiveZuora
     module ClassMethods
       def lazy_load(*field_names)
         Array(field_names).map(&:to_sym).each do |field_name|
-          define_lazy_feild field_name
+          define_lazy_field field_name
         end
       end
 
-      def define_lazy_feild(field)
+      def define_lazy_field(field)
         instance_eval do
           define_method field do
             instance_variable_get("@#{field}") || instance_variable_set("@#{field}", fetch_field(field))
