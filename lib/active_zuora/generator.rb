@@ -158,7 +158,7 @@ module ActiveZuora
 
       customize 'Payment' do
         exclude_from_queries :applied_invoice_amount,
-          :gateway_option_data, :invoice_id, :invoice_number
+          :gateway_option_data, :invoice_id, :invoice_number, :invoice_payment_data
       end
 
       customize 'PaymentMethod' do
