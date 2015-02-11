@@ -1,3 +1,8 @@
+#### v2.2.2
+* Fix #43 - Add invoice_payment_data to exclusions list
+
+  > David: : https://github.com/sportngin/active_zuora/pull/44
+
 #### v2.2.1
 #### v2.2.0
 #### v2.1.4
