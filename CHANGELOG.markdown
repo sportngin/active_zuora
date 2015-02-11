@@ -1,3 +1,4 @@
+#### v2.2.3
 #### v2.2.2
 * Fix #43 - Add invoice_payment_data to exclusions list
 
