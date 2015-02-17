@@ -167,6 +167,12 @@ module ActiveZuora
           :second_token_id, :skip_validation, :token_id
       end
 
+      customize 'ProductRatePlan' do
+        include LazyAttr
+        exclude_from_queries :active_currencies
+        lazy_load :active_currencies
+      end
+
       customize 'ProductRatePlanCharge' do
         exclude_from_queries :product_rate_plan_charge_tier_data
       end
