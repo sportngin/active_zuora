@@ -12,6 +12,9 @@ Version 1 can be found at https://github.com/sportngin/active_zuora_v1
 ## Thread Safety
 2.0.X versions of Active Zuora are not thread safe. They depend on a version of [Savon](https://github.com/savonrb/savon) that is [does not work with threads](https://github.com/savonrb/savon/issues/259).
 
+As of 2.1.0  Active Zuroa is now depending on a thread safe version of [Savon](https://github.com/savonrb/savon)
+
+
 ## Configuration
 
 ```ruby
