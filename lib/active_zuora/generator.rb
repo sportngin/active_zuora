@@ -182,12 +182,11 @@ module ActiveZuora
       end
 
       customize 'RatePlanCharge' do
-        exclude_from_queries :rollover_balance
-        # Can only use overageprice or price or includedunits or
-        # discountamount or discountpercentage in one query.
-        # We'll pick price.
+        include LazyAttr
         exclude_from_queries :overage_price, :included_units,
-          :discount_amount, :discount_percentage
+          :discount_amount, :discount_percentage, :price, :rollover_balance
+
+        lazy_load :price
       end
 
       customize 'Refund' do
