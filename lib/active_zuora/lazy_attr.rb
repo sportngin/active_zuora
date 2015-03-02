@@ -16,11 +16,22 @@ module ActiveZuora
 
     def fetch_field(field_name)
       return nil unless self.id
-      query_string = "select #{self.class.get_field!(field_name).zuora_name} from #{zuora_object_name} where Id = '#{self.id}'"
-      response = self.class.connection.request(:query){ |soap| soap.body = { :query_string => query_string } }
-      response[:query_response][:result][:records][field_name.to_sym]
+
+      records = fetch_field_records("select #{self.class.get_field!(field_name).zuora_name} from #{zuora_object_name} where Id = '#{self.id}'")
+      type_cast_fetched_field(field_name, records.nil? ? nil : records[field_name.to_sym])
     end
     private :fetch_field
+
+    def fetch_field_records(query_string)
+      response = self.class.connection.request(:query){ |soap| soap.body = { :query_string => query_string } }
+      response[:query_response][:result][:records]
+    end
+    private :fetch_field_records
+
+    def type_cast_fetched_field(field_name, value)
+      get_field!(field_name).type_cast(value)
+    end
+    private :type_cast_fetched_field
 
     module ClassMethods
       def lazy_load(*field_names)
