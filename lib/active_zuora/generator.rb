@@ -174,7 +174,7 @@ module ActiveZuora
       end
 
       customize 'ProductRatePlanCharge' do
-        exclude_from_queries :product_rate_plan_charge_tier_data
+        exclude_from_queries :product_rate_plan_charge_tier_data, :revenue_recognition_rule_name
       end
 
       customize 'Usage' do
