@@ -120,7 +120,7 @@ module ActiveZuora
       # them until done.
       until query_response[:result][:done]
         query_response = zobject_class.connection.request(:query_more) do |soap|
-          soap.body = { :query_locator => response[:query_response][:result][:query_locator] }
+          soap.body = { :query_locator => query_response[:result][:query_locator] }
         end[:query_more_response]
         more_records = objectify_query_results(query_response[:result][:records])
         more_records.each(&:block) if block_given?
