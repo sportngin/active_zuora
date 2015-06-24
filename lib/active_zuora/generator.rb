@@ -148,7 +148,7 @@ module ActiveZuora
         # The body field can only be accessed for a single invoice at a time, so
         # exclude it here to not break collections of invoices. The contents of
         # the body field will be lazy loaded in when needed.
-        exclude_from_queries :regenerate_invoice_pdf, :body
+        exclude_from_queries :regenerate_invoice_pdf, :body, :bill_run_id
         lazy_load :body
       end
 
