@@ -1,3 +1,6 @@
+#### v2.2.8
+* Capitalize first letter of wsdl object name to ensure that it is a valid Ruby constant
+
 #### v2.2.7
 #### v2.2.6
 #### v2.2.5
