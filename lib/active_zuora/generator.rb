@@ -29,6 +29,7 @@ module ActiveZuora
           class_name = complex_type.attribute("name").value
           # Skip the zObject base class, we define our own.
           next if class_name == "zObject"
+          class_name[0] = class_name[0].upcase
 
           zuora_class = Class.new
           @class_nesting.const_set(class_name, zuora_class)
