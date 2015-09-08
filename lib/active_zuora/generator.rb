@@ -73,7 +73,7 @@ module ActiveZuora
                 :zuora_name => zuora_name, :array => is_array,
                 :class_name => zuora_class.nested_class_name(field_type.split(':').last)
             else
-              puts "Unkown field type: #{field_type}"
+              puts "Unknown field type: #{field_type}"
             end
           end # each element
 
@@ -148,6 +148,10 @@ module ActiveZuora
         exclude_from_queries :regenerate_invoice_pdf
       end
 
+      customize 'BillingPreviewRequest' do
+        include BillingPreview
+      end
+
       customize 'InvoiceItemAdjustment' do
         exclude_from_queries :customer_name, :customer_number
       end
@@ -177,7 +181,7 @@ module ActiveZuora
         # discountamount or discountpercentage in one query.
         # We'll pick price.
         exclude_from_queries :overage_price, :included_units,
-          :discount_amount, :discount_percentage
+          :discount_amount, :discount_percentage, :price
       end
 
       customize 'Refund' do

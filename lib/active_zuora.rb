@@ -16,6 +16,7 @@ require 'active_zuora/z_object'
 require 'active_zuora/subscribe'
 require 'active_zuora/amend'
 require 'active_zuora/generate'
+require 'active_zuora/billing_preview'
 require 'active_zuora/batch_subscribe'
 require 'active_zuora/collection_proxy'
 
