@@ -152,6 +152,10 @@ module ActiveZuora
         lazy_load :body
       end
 
+      customize 'InvoiceItem' do
+        exclude_from_queries :product_rate_plan_charge_id
+      end
+
       customize 'InvoiceItemAdjustment' do
         exclude_from_queries :customer_name, :customer_number
       end
