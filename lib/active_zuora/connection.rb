@@ -21,7 +21,11 @@ module ActiveZuora
       # Returns a session_id upon success, raises an exception on failure.
       # Instance variables aren't available within the soap request block.
       body = { :username => @username, :password => @password }
-      @soap_client.request(:login){ soap.body = body }[:login_response][:result][:session]
+      header = @custom_header
+      @soap_client.request(:login) do
+        soap.body = body
+        soap.header = header
+      end[:login_response][:result][:session]
     end
 
     def request(*args, &block)
