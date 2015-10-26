@@ -42,6 +42,12 @@ Override the default endpoint or host loaded from the wsdl
 ActiveZuora::Base.connection.soap_client.wsdl.endpoint.host = "www.zuora.com" if Rails.env.production?
 ````
 
+To add custom headers to your Zuora requests, you can use the following pattern
+
+```
+ActiveZuora::Base.connection.custom_header = { 'X-Foo' => 'Bar' }
+```
+
 ## Defining Classes
 
 You can auto-generate all your Zuora classes from the wsdl file.  It will generate all Z-Objects, like Account and Subscription, and Zuora Complex objects, such as SubscribeRequest.
