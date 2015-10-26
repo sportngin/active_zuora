@@ -1,10 +1,8 @@
 require 'spec_helper'
 
 describe "Subscribe" do
-
   integration_test do
-
-    before do
+    before(:all) do
       # Setup product.
       @product = Z::Product.where(:name => "Awesome Product").first ||
         Z::Product.create!(
@@ -38,11 +36,7 @@ describe "Subscribe" do
         )
     end
 
-    after do
-      @product.delete
-      @account.delete
-      @account_2.delete if !!@account_2
-    end
+    after(:all) { @product.try(:delete) }
 
     it "Can successfully subscribe and amend using a new account" do
 
@@ -90,9 +84,10 @@ describe "Subscribe" do
       )
 
       subscribe_request.subscribe!
-      @account = subscribe_request.account
-      expect(subscribe_request.account.new_record?).to be_falsey
-      expect(subscribe_request.account.changed?).to be_falsey
+      account = subscribe_request.account
+
+      expect(account.new_record?).to be_falsey
+      expect(account.changed?).to be_falsey
       expect(subscribe_request.subscription_data.subscription.new_record?).to be_falsey
       expect(subscribe_request.subscription_data.subscription.rate_plans.first.
         rate_plan_charges.first.
@@ -122,6 +117,8 @@ describe "Subscribe" do
       amend_request.amend!
       expect(amend_request.amendments.first.new_record?).to be_falsey
       expect(amend_request.result).to be_present
+
+      account.delete
     end
 
     it "Can successfully subscribe and generate an invoice" do
@@ -171,9 +168,10 @@ describe "Subscribe" do
       )
 
       subscribe_request.subscribe!
-      @account = subscribe_request.account
-      expect(subscribe_request.account.new_record?).to be_falsey
-      expect(subscribe_request.account.changed?).to be_falsey
+      account = subscribe_request.account
+
+      expect(account.new_record?).to be_falsey
+      expect(account.changed?).to be_falsey
       expect(subscribe_request.subscription_data.subscription.new_record?).to be_falsey
       expect(subscribe_request.subscription_data.subscription.rate_plans.first.
         rate_plan_charges.first.
@@ -214,6 +212,8 @@ describe "Subscribe" do
       expect(invoice.id).to be_present
       expect(invoice.account_id).to eq(subscribe_request.account.id)
       expect(invoice.body).to be_present
+
+      account.delete
     end
 
     it "Can successfully batch subscribe from a collection proxy of subscribe requests and generate an invoice for the first subscription" do
@@ -308,8 +308,12 @@ describe "Subscribe" do
       collection = Z::CollectionProxy.new([subscribe_request_1,subscribe_request_2])
       collection.batch_subscribe!
 
+      account_1 = subscribe_request_1.account
+      account_2 = subscribe_request_2.account
+
       #subscribe reqeust 1
-      @account = subscribe_request_1.account
+      expect(account_1.new_record?).to be_falsey
+      expect(account_1.changed?).to be_falsey
       expect(subscribe_request_1.subscription_data.subscription.new_record?).to be_falsey
       expect(subscribe_request_1.subscription_data.subscription.rate_plans.first.
         rate_plan_charges.first.
@@ -317,13 +321,15 @@ describe "Subscribe" do
       expect(subscribe_request_1.result).to be_present
 
       #subscribe reqeust 2
-      @account_2 = subscribe_request_2.account
+      expect(account_2.new_record?).to be_falsey
+      expect(account_2.changed?).to be_falsey
       expect(subscribe_request_2.subscription_data.subscription.new_record?).to be_falsey
       expect(subscribe_request_2.subscription_data.subscription.rate_plans.first.
         rate_plan_charges.first.
         product_rate_plan_charge).to eq(@product_rate_plan_charge)
       expect(subscribe_request_2.result).to be_present
-    end
 
+      [account_1, account_2].each(&:delete)
+    end
   end
 end

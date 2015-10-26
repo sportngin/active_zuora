@@ -34,4 +34,33 @@ describe ActiveZuora::Connection do
       expect(@stub_was_called).to be_truthy
     end
   end
+
+  describe 'login' do
+    before do
+      @connection = described_class.new
+    end
+
+    context 'when a custom header is set' do
+      it 'uses the custom header' do
+        @connection.custom_header = { 'TestHeader' => 'Foo' }
+        allow(Savon::SOAP::Request).to receive(:new) do |config, http, soap|
+          expect(soap.header).to eq({ 'TestHeader' => 'Foo' })
+          double('response').as_null_object
+        end
+
+        @connection.login
+      end
+    end
+
+    context 'when a custom header is not set' do
+      it 'does not use the custom header' do
+        allow(Savon::SOAP::Request).to receive(:new) do |config, http, soap|
+          expect(soap.header).to eq({})
+          double('response').as_null_object
+        end
+
+        @connection.login
+      end
+    end
+  end
 end
