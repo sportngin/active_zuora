@@ -121,7 +121,7 @@ describe "Subscribe" do
       account.delete
     end
 
-    it "Can successfully subscribe and generate a a bill preview and an invoice" do
+    it "Can successfully subscribe and generate a bill preview and an invoice" do
 
       subscribe_request = Z::SubscribeRequest.new(
         :account => {
