@@ -1,4 +1,3 @@
-#### v2.3.1
 *  Add billing preview capability
 *  Capitalize first letter of wsdl object name to ensure that it is a valid Ruby constant
 #### v2.3.0
