@@ -1,3 +1,6 @@
+#### v2.3.1
+*  Add billing preview capability
+*  Capitalize first letter of wsdl object name to ensure that it is a valid Ruby constant
 #### v2.3.0
 #### v2.2.7
 #### v2.2.6
@@ -10,8 +13,6 @@
 * Fix #43 - Add invoice_payment_data to exclusions list
 
   > David: : https://github.com/sportngin/active_zuora/pull/44
-
-#### v2.2.1
 #### v2.2.0
 #### v2.1.4
 #### v2.1.3

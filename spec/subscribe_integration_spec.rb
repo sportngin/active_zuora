@@ -121,7 +121,7 @@ describe "Subscribe" do
       account.delete
     end
 
-    it "Can successfully subscribe and generate an invoice" do
+    it "Can successfully subscribe and generate a bill preview and an invoice" do
 
       subscribe_request = Z::SubscribeRequest.new(
         :account => {
@@ -199,6 +199,15 @@ describe "Subscribe" do
       amend_request.amend!
       expect(amend_request.amendments.first.new_record?).to be_falsey
       expect(amend_request.result).to be_present
+
+      billing_preview_request = Z::BillingPreviewRequest.new(
+          account_id: subscribe_request.account.id,
+          target_date: Date.today + 2.months
+      )
+
+      billing_preview_result = billing_preview_request.billing_preview!
+      expect(billing_preview_result).to be_present
+      expect(billing_preview_result.invoice_item).to be_present
 
       invoice = Z::Invoice.new(
           account_id: subscribe_request.account.id,
