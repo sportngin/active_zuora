@@ -1,5 +1,5 @@
 #### v2.3.1
-*  Add billing preview capability and exclude price from rate plan charge queries
+*  Add billing preview capability
 *  Capitalize first letter of wsdl object name to ensure that it is a valid Ruby constant
 #### v2.3.0
 #### v2.2.7
