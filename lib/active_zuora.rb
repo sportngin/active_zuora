@@ -32,7 +32,7 @@ module ActiveZuora
   end
 
   def self.generate_classes(options={})
-    generator = Generator.new(Base.connection.soap_client.wsdl.parser, options)
+    generator = Generator.new(Base.connection.soap_client.wsdl.parser.document, options)
     generator.generate_classes
   end
 

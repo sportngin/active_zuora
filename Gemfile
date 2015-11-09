@@ -2,5 +2,5 @@ source "https://rubygems.org"
 
 gemspec
 
-gem 'savon_zuora', :git => 'git@github.com:raduoprita/savon', :branch => 'savon_0_9_9'
-gem 'nori_savon', :git => 'git@github.com:raduoprita/nori.git', :branch => 'nori_1_1_5'
+gem 'savon_zuora', :git => 'git@github.com:Invoca/savon', :branch => '91/t/STORY-3309/update_httpi_and_wasabi_dependencies'
+gem 'nori', '~> 2.4'
