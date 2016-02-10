@@ -2,5 +2,5 @@ source "https://rubygems.org"
 
 gemspec
 
-gem 'savon_zuora', github: 'Invoca/savon', ref: 'acede24e3393f65ef73c284d890dd71e49e4efaa'
+gem 'savon_zuora', '~> 0.9.10', github: 'Invoca/savon', ref: 'bca58c3420d44a55fc5ba85e23cdb26facf4f3de'
 gem 'nori', '~> 2.4'
