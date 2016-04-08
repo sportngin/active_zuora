@@ -1,4 +1,5 @@
 #### v2.4.0
+* Add date field to support WSDL >= 69
 #### v2.3.1
 *  Add billing preview capability
 *  Capitalize first letter of wsdl object name to ensure that it is a valid Ruby constant
