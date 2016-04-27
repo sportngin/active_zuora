@@ -10,7 +10,6 @@ module ActiveZuora
       # Store login credentials and create SOAP client.
       @username = configuration[:username]
       @password = configuration[:password]
-      @session_timeout = configuration[:session_timeout] || 15.minutes
       @soap_client = Savon::Client.new do
         wsdl.document = configuration[:wsdl] || WSDL
         http.proxy = configuration[:http_proxy] if configuration[:http_proxy]
