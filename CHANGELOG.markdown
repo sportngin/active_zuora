@@ -1,3 +1,5 @@
+#### v2.4.1
+* Set the order attribute only if the `created_date` field is defined.
 #### v2.4.0
 * Add date field to support WSDL >= 69
 #### v2.3.1
