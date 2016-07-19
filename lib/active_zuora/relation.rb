@@ -7,7 +7,10 @@ module ActiveZuora
 
     def initialize(zobject_class, selected_field_names=[:id])
       @zobject_class, @selected_field_names, @filters = zobject_class, selected_field_names, []
-      @order_attribute, @order_direction = :created_date, :asc
+
+      if field?(:created_date)
+        @order_attribute, @order_direction = :created_date, :asc
+      end
     end
 
     def dup
