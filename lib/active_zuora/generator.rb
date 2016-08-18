@@ -122,12 +122,13 @@ module ActiveZuora
       nesting = @class_nesting
 
       customize 'Account' do
-        belongs_to :bill_to, :class_name => nested_class_name('Contact') if field? :bill_to
+        belongs_to :bill_to, :class_name => nested_class_name('Contact') if field? :bill_to_id
+        belongs_to :default_payment_method, :class_name => nested_class_name('PaymentMethod') if field? :default_payment_method_id
         if field? :parent_id
           belongs_to :parent, :class_name => nested_class_name('Account')
           has_many :children, :class_name => nested_class_name('Account'), :foreign_key => :parent_id, :inverse_of => :parent
         end
-        belongs_to :sold_to, :class_name => nested_class_name('Contact') if field? :sold_to
+        belongs_to :sold_to, :class_name => nested_class_name('Contact') if field? :sold_to_id
         validates :currency, :presence => true if field? :currency
         validates :name, :presence => true if field? :name
         validates :status, :presence => true if field? :status
