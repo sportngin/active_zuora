@@ -11,7 +11,7 @@ module ActiveZuora
       @username = configuration[:username]
       @password = configuration[:password]
       @session_timeout = configuration[:session_timeout] || 15.minutes
-      @soap_client = Savon::Client.new do
+      @soap_client = SavonZuora::Client.new do
         wsdl.document = configuration[:wsdl] || WSDL
         http.proxy = configuration[:http_proxy] if configuration[:http_proxy]
       end
@@ -33,7 +33,7 @@ module ActiveZuora
         soap.header = header
         yield(soap)
       end
-    rescue Savon::SOAP::Fault => exception
+    rescue SavonZuora::SOAP::Fault => exception
       # Catch invalid sessions, and re-issue the request.
       raise unless exception.message =~ /INVALID_SESSION/
       @session_id = login
