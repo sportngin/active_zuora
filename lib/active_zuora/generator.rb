@@ -158,8 +158,8 @@ module ActiveZuora
         # in the result. More info here: https://github.com/sportngin/active_zuora/issues/38
         exclude_from_queries :regenerate_invoice_pdf, :body
         class << self
-          def invoice_body_for(account_id:, invoice_number:)
-             (zuora_invoice = select(:body).where(account_id: account_id, invoice_number: invoice_number).first) or
+          def invoice_body_for(account_id:, invoice_number:, status:)
+             (zuora_invoice = select(:body).where(account_id: account_id, invoice_number: invoice_number, status: status).first) or
                 raise RecordNotFound, "Couldn't find #{self.name} with invoice_number '#{invoice_number}' and account_id '#{account_id}'"
              zuora_invoice.body.presence or raise ApiError, "body is not present for #{self.name} with invoice_number '#{invoice_number}' and account_id '#{account_id}'"
           end
