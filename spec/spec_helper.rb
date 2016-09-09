@@ -27,4 +27,3 @@ module Tenant
     ENV['ZUORA_CURRENCY'] || 'USD'
   end
 end
-
