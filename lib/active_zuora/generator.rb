@@ -154,7 +154,9 @@ module ActiveZuora
 
       customize 'Invoice' do
         include Generate
-        exclude_from_queries :regenerate_invoice_pdf
+        # The body is excluded because the zuora api doesn't allow us to query multiple invoices if the body is included
+        # in the result. More info here: https://github.com/sportngin/active_zuora/issues/38
+        exclude_from_queries :regenerate_invoice_pdf, :body
         class << self
           def invoice_body_for(account_id:, invoice_number:)
              (zuora_invoice = select(:body).where(account_id: account_id, invoice_number: invoice_number).first) or

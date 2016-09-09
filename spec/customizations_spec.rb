@@ -50,6 +50,11 @@ describe "customizations" do
   end
 
   describe "Invoice" do
+
+    it "excludes the body from queries" do
+      expect(Z::Invoice.relation.selected_field_names).not_to include(:body)
+    end
+
     describe "invoice_body_for" do
       def mock_invoice_request(account_id:, invoice_number:, return_value:)
         relation, select_relation = double, double
