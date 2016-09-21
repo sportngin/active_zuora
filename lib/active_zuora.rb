@@ -19,6 +19,9 @@ require 'active_zuora/generate'
 
 module ActiveZuora
 
+  class RecordNotFound < StandardError; end
+  class ApiError       < StandardError; end
+
   # Setup configuration.  None of this sends a request.
   def self.configure(configuration)
     # Set some sensible defaults with the savon SOAP client.

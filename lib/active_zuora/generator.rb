@@ -126,6 +126,17 @@ module ActiveZuora
         validates :currency, :presence => true if field? :currency
         validates :name, :presence => true if field? :name
         validates :status, :presence => true if field? :status
+        class << self
+          def find_by_account_number!(account_number)
+            where(account_number: account_number).first or
+              raise RecordNotFound, "Couldn't find #{self.name} with account_number '#{account_number}'"
+          end
+
+          def id_for_account_number(account_number)
+            find_by_account_number!(account_number).id.presence or
+              raise ApiError, "id is not present for #{self.name} with account_number '#{account_number}'"
+          end
+        end
       end
 
       customize 'Amendment' do
@@ -143,7 +154,16 @@ module ActiveZuora
 
       customize 'Invoice' do
         include Generate
-        exclude_from_queries :regenerate_invoice_pdf
+        # The body is excluded because the zuora api doesn't allow us to query multiple invoices if the body is included
+        # in the result. More info here: https://github.com/sportngin/active_zuora/issues/38
+        exclude_from_queries :regenerate_invoice_pdf, :body
+        class << self
+          def invoice_body_for(account_id:, invoice_number:, status:)
+             (zuora_invoice = select(:body).where(account_id: account_id, invoice_number: invoice_number, status: status).first) or
+                raise RecordNotFound, "Couldn't find #{self.name} with invoice_number '#{invoice_number}' and account_id '#{account_id}'"
+             zuora_invoice.body.presence or raise ApiError, "body is not present for #{self.name} with invoice_number '#{invoice_number}' and account_id '#{account_id}'"
+          end
+        end
       end
 
       customize 'InvoiceItemAdjustment' do
