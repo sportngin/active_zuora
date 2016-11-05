@@ -1,3 +1,5 @@
+#### v2.5.0
+* Add Support for rails 5
 #### v2.4.1
 * Set the order attribute only if the `created_date` field is defined.
 #### v2.4.0
