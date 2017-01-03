@@ -1,4 +1,5 @@
 #### v2.5.1
+#### v2.5.1
 * Fix bug with bill_to and sold_to on account
 #### v2.5.0
 * Add Support for rails 5
