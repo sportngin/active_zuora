@@ -71,6 +71,9 @@ module ActiveZuora
             when "dateTime"
               zuora_class.field field_name, :datetime,
                 :zuora_name => zuora_name, :array => is_array
+            when "date"
+              zuora_class.field field_name, :date,
+                :zuora_name => zuora_name, :array => is_array
             when /\A(zns:|ons:)/
               zuora_class.field field_name, :object,
                 :zuora_name => zuora_name, :array => is_array,
