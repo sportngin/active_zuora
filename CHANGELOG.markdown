@@ -1,4 +1,6 @@
-#### v2.5.1
+#### v2.5.2
+ * Bug fix to the query locator
+ * Bug fix to the RatePlanCharge query exclusion
 #### v2.5.1
 * Fix bug with bill_to and sold_to on account
 #### v2.5.0
