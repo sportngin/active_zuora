@@ -187,7 +187,7 @@ module ActiveZuora
       end
 
       customize 'ProductRatePlanCharge' do
-        exclude_from_queries :product_rate_plan_charge_tier_data, :revenue_recognition_rule_name, :deferred_revenue_account, :recognized_revenue_account
+        exclude_from_queries :product_rate_plan_charge_tier_data, :revenue_recognition_rule_name, :deferred_revenue_account, :recognized_revenue_account, :product_discount_apply_detail_data
       end
 
       customize 'Usage' do
