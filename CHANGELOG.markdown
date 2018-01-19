@@ -1,3 +1,5 @@
+#### v2.5.3
+ * Remove max version restriction for Active Model and Active Support to support rails 5.1
 #### v2.5.2
  * Bug fix to the query locator
  * Bug fix to the RatePlanCharge query exclusion
