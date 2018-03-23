@@ -1,3 +1,5 @@
+#### v2.5.4
+ * Add ProductDiscountApplyDetailData to query exclusion
 #### v2.5.3
  * Remove max version restriction for Active Model and Active Support to support rails 5.1
 #### v2.5.2
