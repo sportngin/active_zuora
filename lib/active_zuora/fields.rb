@@ -52,7 +52,12 @@ module ActiveZuora
     end
 
     def clear_changed_attributes
-      changed_attributes.clear
+      if ActiveSupport.version.to_s.to_f >= 5.2
+        clear_changes_information
+      else
+        changed_attributes.clear
+      end
+
       # If we have any fields that are also Base objects,
       # clear their attributes as well.
       fields.each { |field| field.clear_changed_attributes(send(field.name)) }

@@ -226,7 +226,11 @@ module ActiveZuora
         # SOAP namespaces.
         attributes.delete_if { |key, value| key.to_s.start_with? "@" }
         # Instantiate the zobject class, but don't track the changes.
-        zobject_class.new(attributes).tap { |record| record.changed_attributes.clear }
+        if ActiveSupport.version.to_s.to_f >= 5.2
+          zobject_class.new(attributes).tap { |record| record.clear_changes_information }
+        else
+          zobject_class.new(attributes).tap { |record| record.changed_attributes.clear }
+        end
       end
     end
 
