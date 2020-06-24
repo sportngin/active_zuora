@@ -1,16 +1,12 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
 require "active_zuora/version"
-authors = {
-  "Ed Lebert" => "edlebert@gmail.com",
-  "Andy Fleener" => "andy.fleener@sportngin.com",
-}
 Gem::Specification.new do |s|
   s.name             = "active_zuora"
   s.version          = ActiveZuora::VERSION.to_s
   s.platform         = Gem::Platform::RUBY
-  s.authors          = authors.keys
-  s.email            = authors.values
+  s.authors          = ["SportsEngine's Infrastructure Engineers"]
+  s.email            = ["infrastructure@sportsengine.com"]
   s.homepage         = "https://github.com/sportngin/active_zuora"
   s.summary          = %q{ActiveZuora - Zuora API that looks and feels like ActiveRecord.}
   s.description      = %q{ActiveZuora - Zuora API based on ActiveModel and auto-generated from your zuora.wsdl.}
