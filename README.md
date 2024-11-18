@@ -189,3 +189,4 @@ http://www.opensource.org/licenses/MIT
 Bug reports and feature requests can be filed as github issues here:
 
 https://github.com/sportngin/active_zuora/issues
+
