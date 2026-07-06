@@ -6,11 +6,11 @@ module ActiveZuora
       actions.each do |action|
         method_name = action.to_s.snakecase.to_sym
 
-        class_action_module.define_method(method_name) do |body = nil, &block|
+        class_action_module.send(:define_method, method_name) do |body = nil, &block|
           client.request :wsdl, action, :body => body, &block
         end
 
-        instance_action_module.define_method(method_name) do |body = nil, &block|
+        instance_action_module.send(:define_method, method_name) do |body = nil, &block|
           self.class.public_send(method_name, body, &block)
         end
       end
