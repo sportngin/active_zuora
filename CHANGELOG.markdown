@@ -1,3 +1,7 @@
+#### v2.6.1
+ * Backport the `Savon::Model` CVE-2026-53510 fix by defining generated methods without `module_eval`.
+ * Constrain Rack to `< 3` for compatibility with HTTPI 1.x.
+ * Prefer upgrading to Savon >= 2.17.2 once ActiveZuora can require Ruby 3+.
 #### v2.5.4
  * Add ProductDiscountApplyDetailData to query exclusion
 #### v2.5.3
