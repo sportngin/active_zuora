@@ -1,4 +1,6 @@
 module ActiveZuora
+  # Compatibility backport for Savon 1.x. When ActiveZuora can require Ruby 3+
+  # and migrate to Savon >= 2.17.2, prefer the upstream fix and remove this patch.
   module SavonModelCve202653510Patch
     def actions(*actions)
       actions.each do |action|
