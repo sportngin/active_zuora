@@ -1,3 +1,7 @@
+#### v2.6.1
+ * Vendor the Savon 1 runtime used by ActiveZuora and drop the vulnerable `savon` gem dependency.
+ * Backport the `Savon::Model` CVE-2026-53510 fix by defining generated methods without `module_eval`.
+ * Constrain Rack to `< 3` for compatibility with the vendored HTTPI 1.x runtime.
 #### v2.5.4
  * Add ProductDiscountApplyDetailData to query exclusion
 #### v2.5.3

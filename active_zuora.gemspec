@@ -21,9 +21,16 @@ Gem::Specification.new do |s|
   s.license          = "MIT"
   s.extra_rdoc_files = [ "README.md" ]
 
-  s.add_runtime_dependency('savon', ["~> 1.2.0"])
+  s.add_runtime_dependency('akami', ["~> 1.2.0"])
   s.add_runtime_dependency('activesupport', [">= 3.0.0"])
   s.add_runtime_dependency('activemodel', [">= 3.0.0"])
+  s.add_runtime_dependency('builder', [">= 2.1.2"])
+  s.add_runtime_dependency('gyoku', ["~> 0.4.5"])
+  s.add_runtime_dependency('httpi', ["~> 1.1.0"])
+  s.add_runtime_dependency('nokogiri', [">= 1.4.0"])
+  s.add_runtime_dependency('nori', ["~> 1.1.0"])
+  s.add_runtime_dependency('rack', ["< 3"])
+  s.add_runtime_dependency('wasabi', ["~> 2.5.0"])
 
   s.add_development_dependency('rake', [">= 0.8.7"])
   s.add_development_dependency('rspec', [">= 3.0.0"])
