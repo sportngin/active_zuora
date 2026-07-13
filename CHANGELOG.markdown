@@ -1,3 +1,5 @@
+#### v2.7.1
+ * Upgrade Savon to 2.17.2 to address Snyk vulnerability
 #### v2.6.1
  * Backport the `Savon::Model` CVE-2026-53510 fix by defining generated methods without `module_eval`.
  * Constrain Rack to `< 3` for compatibility with HTTPI 1.x.
