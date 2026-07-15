@@ -18,4 +18,4 @@ module ActiveZuora
   end
 end
 
-Savon::Model.prepend(ActiveZuora::SavonModelCve202653510Patch)
+Savon::Model.prepend(ActiveZuora::SavonModelCve202653510Patch) if Savon::Model.method_defined?(:actions)

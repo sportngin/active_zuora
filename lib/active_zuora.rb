@@ -26,20 +26,12 @@ module ActiveZuora
 
   # Setup configuration.  None of this sends a request.
   def self.configure(configuration)
-    # Set some sensible defaults with the savon SOAP client.
-    Savon.configure do |config|
-      config.log = HTTPI.log = configuration[:log] || false
-      config.log_level = configuration[:log_level] || :info
-      config.logger = configuration[:logger] if configuration[:logger]
-      config.logger.filter = configuration[:log_filters] || [:password, :SessionHeader]
-      config.raise_errors = true
-    end
     # Create a default connection on Base
     Base.connection = Connection.new(configuration)
   end
 
   def self.generate_classes(options={})
-    generator = Generator.new(Base.connection.soap_client.wsdl.parser, options)
+    generator = Generator.new(Base.connection.soap_client.wsdl.parser.document, options)
     generator.generate_classes
   end
 

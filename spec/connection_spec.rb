@@ -8,30 +8,22 @@ describe ActiveZuora::Connection do
     end
 
     it "passes the regular header if not set" do
-      allow(Savon::SOAP::Request).to receive(:new) do |config, http, soap|
-        @stub_was_called = true
-        expect(soap.header).to eq( { "SessionHeader" => {"session" => nil} } )
-
-        double('response').as_null_object
-      end
+      response = double('response', :body => {})
+      expect(@connection.soap_client).to receive(:call).
+        with(:amend, hash_including(:soap_header => { "SessionHeader" => {"session" => nil} })).
+        and_return(response)
 
       @connection.request(:amend) {}
-
-      expect(@stub_was_called).to be_truthy
     end
 
     it "merges in a custom header if set" do
       @connection.custom_header = {'CallOptions' => {'useSingleTransaction' => true}}
-      allow(Savon::SOAP::Request).to receive(:new) do |config, http, soap|
-        @stub_was_called = true
-        expect(soap.header).to eq( { "SessionHeader" => {"session" => nil}, 'CallOptions' => {'useSingleTransaction' => true} } )
-
-        double('response').as_null_object
-      end
+      response = double('response', :body => {})
+      expect(@connection.soap_client).to receive(:call).
+        with(:amend, hash_including(:soap_header => { "SessionHeader" => {"session" => nil}, 'CallOptions' => {'useSingleTransaction' => true} })).
+        and_return(response)
 
       @connection.request(:amend) {}
-
-      expect(@stub_was_called).to be_truthy
     end
   end
 
@@ -43,10 +35,10 @@ describe ActiveZuora::Connection do
     context 'when a custom header is set' do
       it 'uses the custom header' do
         @connection.custom_header = { 'TestHeader' => 'Foo' }
-        allow(Savon::SOAP::Request).to receive(:new) do |config, http, soap|
-          expect(soap.header).to eq({ 'TestHeader' => 'Foo' })
-          double('response').as_null_object
-        end
+        response = double('response', :body => { :login_response => { :result => { :session => 'session' } } })
+        expect(@connection.soap_client).to receive(:call).
+          with(:login, :message => { :username => nil, :password => nil }, :soap_header => { 'TestHeader' => 'Foo' }).
+          and_return(response)
 
         @connection.login
       end
@@ -54,10 +46,10 @@ describe ActiveZuora::Connection do
 
     context 'when a custom header is not set' do
       it 'does not use the custom header' do
-        allow(Savon::SOAP::Request).to receive(:new) do |config, http, soap|
-          expect(soap.header).to eq({})
-          double('response').as_null_object
-        end
+        response = double('response', :body => { :login_response => { :result => { :session => 'session' } } })
+        expect(@connection.soap_client).to receive(:call).
+          with(:login, :message => { :username => nil, :password => nil }, :soap_header => {}).
+          and_return(response)
 
         @connection.login
       end

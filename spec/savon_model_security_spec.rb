@@ -10,7 +10,7 @@ describe Savon::Model do
       action = "safe_action\nend\nFile.write(#{evidence.inspect}, 'exploited')\ndef unsafe_action"
       model = Class.new { extend Savon::Model }
 
-      expect { model.actions(action) }.not_to change { File.exist?(evidence) }.from(false)
+      expect { model.operations(action) }.not_to change { File.exist?(evidence) }.from(false)
     ensure
       File.delete(evidence) if evidence && File.exist?(evidence)
     end
