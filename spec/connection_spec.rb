@@ -46,12 +46,19 @@ describe ActiveZuora::Connection do
     it "returns namespace qualifiers without xmlns prefixes" do
       response = double('response', :body => {})
       expect(@connection.soap_client).to receive(:call).
-        with(:amend, :message => include("<ons:requests>body</ons:requests>"), :soap_header => { "SessionHeader" => {"session" => nil} }).
+        with(
+          :amend,
+          :message => include('<ons:requests xsi:type="ons:Account"><ons:Name>Acme</ons:Name></ons:requests>'),
+          :soap_header => { "SessionHeader" => {"session" => nil} }
+        ).
         and_return(response)
 
       @connection.request(:amend) do |soap|
         soap.body do |xml|
-          xml.tag!(soap.namespace_by_uri("http://object.api.zuora.com/"), :requests, "body")
+          qualifier = soap.namespace_by_uri("http://object.api.zuora.com/")
+          xml.tag!(qualifier, :requests, "xsi:type" => "#{qualifier}:Account") do
+            xml.tag!(qualifier, :Name, "Acme")
+          end
         end
       end
     end

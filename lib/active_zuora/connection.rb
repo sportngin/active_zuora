@@ -1,3 +1,5 @@
+require 'builder'
+
 module ActiveZuora
   class Connection
 
@@ -8,6 +10,42 @@ module ActiveZuora
 
     class SoapRequest
       BODY_NOT_PROVIDED = Object.new
+
+      class NamespacedXmlBuilder
+        def initialize
+          @builder = ::Builder::XmlMarkup.new
+        end
+
+        def tag!(name, *args, &block)
+          if args.first.is_a?(Symbol)
+            name = "#{name}:#{args.shift}"
+          end
+
+          @builder.tag!(name, *args, &wrap_block(block))
+        end
+
+        def target!
+          @builder.target!
+        end
+
+        private
+
+        def wrap_block(block)
+          return unless block
+
+          proc do
+            block.arity.positive? ? block.call(self) : block.call
+          end
+        end
+
+        def method_missing(method, *args, &block)
+          @builder.tag!(method, *args, &wrap_block(block))
+        end
+
+        def respond_to_missing?(method, include_private = false)
+          @builder.respond_to?(method, include_private) || super
+        end
+      end
 
       attr_accessor :header
       attr_reader :body
@@ -22,7 +60,7 @@ module ActiveZuora
         return @body if value.equal?(BODY_NOT_PROVIDED) && !block_given?
 
         if block_given?
-          xml = ::Builder::XmlMarkup.new
+          xml = NamespacedXmlBuilder.new
           yield xml
           @body = xml.target!
         else
