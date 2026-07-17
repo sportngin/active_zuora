@@ -7,11 +7,31 @@ module ActiveZuora
     WSDL = File.expand_path('../../../wsdl/zuora.wsdl', __FILE__)
 
     class SoapRequest
-      attr_accessor :body, :header
+      BODY_NOT_PROVIDED = Object.new
+
+      attr_accessor :header
+      attr_reader :body
 
       def initialize(connection)
         @connection = connection
         @header = {}
+        @body = nil
+      end
+
+      def body(value = BODY_NOT_PROVIDED)
+        return @body if value.equal?(BODY_NOT_PROVIDED) && !block_given?
+
+        if block_given?
+          xml = ::Builder::XmlMarkup.new
+          yield xml
+          @body = xml.target!
+        else
+          @body = value
+        end
+      end
+
+      def body=(value)
+        @body = value
       end
 
       def namespace
@@ -19,7 +39,8 @@ module ActiveZuora
       end
 
       def namespace_by_uri(uri)
-        @connection.soap_client.wsdl.parser.namespaces.key(uri)
+        namespace = @connection.soap_client.wsdl.parser.document.namespaces.key(uri)
+        namespace&.sub(/\Axmlns:/, '')
       end
     end
 
@@ -48,7 +69,7 @@ module ActiveZuora
       soap.header = header
       yield(soap)
 
-      @soap_client.call(args.first, :message => soap.body, :soap_header => soap.header).body
+      @soap_client.call(args.first, :message => (soap.body || {}), :soap_header => soap.header).body
     rescue Savon::SOAPFault => exception
       # Catch invalid sessions, and re-issue the request.
       raise unless exception.message =~ /INVALID_SESSION/

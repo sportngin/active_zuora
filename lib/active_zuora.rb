@@ -2,7 +2,6 @@ require 'savon'
 require 'active_model'
 require 'active_support/all'
 
-require 'active_zuora/savon_model_cve_2026_53510_patch'
 require 'active_zuora/connection'
 require 'active_zuora/generator'
 require 'active_zuora/fields'
