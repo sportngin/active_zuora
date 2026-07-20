@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 3.0.0"
 
   s.add_runtime_dependency('savon', ["~> 2.17.2"])
+  s.add_runtime_dependency('builder')
   s.add_runtime_dependency('activesupport', [">= 3.0.0"])
   s.add_runtime_dependency('activemodel', [">= 3.0.0"])
   s.add_runtime_dependency('rack', [">= 1.0", "< 3"])
