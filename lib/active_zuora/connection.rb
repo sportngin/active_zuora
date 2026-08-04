@@ -12,20 +12,21 @@ module ActiveZuora
       BODY_NOT_PROVIDED = Object.new
 
       class NamespacedXmlBuilder
+        BUILDER_METHODS = (
+          ::Builder::XmlBase.public_instance_methods(false) +
+          ::Builder::XmlMarkup.public_instance_methods(false)
+        ).freeze
+
         def initialize
           @builder = ::Builder::XmlMarkup.new
         end
 
-        def tag!(name, *args, &block)
-          if args.first.is_a?(Symbol)
-            name = "#{name}:#{args.shift}"
+        BUILDER_METHODS.each do |method_name|
+          next if method_name == :method_missing
+
+          define_method(method_name) do |*args, &block|
+            @builder.__send__(method_name, *args, &wrap_block(block))
           end
-
-          @builder.tag!(name, *args, &wrap_block(block))
-        end
-
-        def target!
-          @builder.target!
         end
 
         private
@@ -43,7 +44,7 @@ module ActiveZuora
         end
 
         def respond_to_missing?(method, include_private = false)
-          @builder.respond_to?(method, include_private) || super
+          true
         end
       end
 
@@ -107,7 +108,9 @@ module ActiveZuora
       soap.header = header
       yield(soap)
 
-      @soap_client.call(args.first, :message => (soap.body || {}), :soap_header => soap.header).body
+      response = @soap_client.call(args.first, :message => (soap.body || {}), :soap_header => soap.header)
+      response.define_singleton_method(:[]) { |key| body[key] } unless response.respond_to?(:[])
+      response
     rescue Savon::SOAPFault => exception
       # Catch invalid sessions, and re-issue the request.
       raise unless exception.message =~ /INVALID_SESSION/

@@ -18,6 +18,22 @@ describe ActiveZuora::Connection do
       end
     end
 
+    it "returns the response object with body hash indexing" do
+      response = double('response', :body => { :amend_response => { :result => { :success => true } } })
+      expect(response).to receive(:http).and_return(:http_response)
+      expect(@connection.soap_client).to receive(:call).
+        with(:amend, :message => { :requests => [] }, :soap_header => { "SessionHeader" => {"session" => nil} }).
+        and_return(response)
+
+      result = @connection.request(:amend) do |soap|
+        soap.body = { :requests => [] }
+      end
+
+      expect(result).to equal(response)
+      expect(result.http).to eq(:http_response)
+      expect(result[:amend_response]).to eq(:result => { :success => true })
+    end
+
     it "merges in a custom header if set" do
       @connection.custom_header = {'CallOptions' => {'useSingleTransaction' => true}}
       response = double('response', :body => {})
@@ -59,6 +75,45 @@ describe ActiveZuora::Connection do
           xml.tag!(qualifier, :requests, "xsi:type" => "#{qualifier}:Account") do
             xml.tag!(qualifier, :Name, "Acme")
           end
+        end
+      end
+    end
+
+    it "supports standard Builder XML operations in the body block" do
+      response = double('response', :body => {})
+      expect(@connection.soap_client).to receive(:call).
+        with(
+          :amend,
+          :message => "<requests>a&amp;b<raw/></requests>",
+          :soap_header => { "SessionHeader" => {"session" => nil} }
+        ).
+        and_return(response)
+
+      @connection.request(:amend) do |soap|
+        soap.body do |xml|
+          xml.requests do
+            xml.text! "a&b"
+            xml << "<raw/>"
+          end
+        end
+      end
+    end
+
+    it "does not mutate generated XML when checking Builder operation support" do
+      response = double('response', :body => {})
+      expect(@connection.soap_client).to receive(:call).
+        with(
+          :amend,
+          :message => "<requests/>",
+          :soap_header => { "SessionHeader" => {"session" => nil} }
+        ).
+        and_return(response)
+
+      @connection.request(:amend) do |soap|
+        soap.body do |xml|
+          expect(xml.respond_to?(:text!)).to be_truthy
+          expect(xml.respond_to?(:requests)).to be_truthy
+          xml.requests
         end
       end
     end
