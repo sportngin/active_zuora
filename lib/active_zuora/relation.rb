@@ -130,9 +130,10 @@ module ActiveZuora
         records.concat more_records
       end
       sort_records!(records)
-    rescue Savon::SOAP::Fault => exception
+    rescue Savon::SOAPFault => exception
       # Add the zql to the exception message and re-raise.
-      exception.message << ": #{to_zql}"
+      message = "#{exception.message}: #{to_zql}"
+      exception.define_singleton_method(:message) { message }
       raise
     end
 
@@ -251,8 +252,6 @@ module ActiveZuora
 
   end
 end
-
-
 
 
 

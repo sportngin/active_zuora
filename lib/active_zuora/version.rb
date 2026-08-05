@@ -1,3 +1,3 @@
 module ActiveZuora
-  VERSION = "2.6.1"
+  VERSION = "2.7.1"
 end
