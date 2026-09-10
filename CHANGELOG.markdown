@@ -1,3 +1,6 @@
+#### v2.7.2.rack3.1
+ * Add support for Rack 3 while retaining compatibility with Rack 2.
+
 #### v2.7.1
  * Upgrade Savon to 2.17.2 to address Snyk vulnerability
  * Requires Ruby 3+
